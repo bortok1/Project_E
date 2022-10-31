@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright Bean Bin, All Rights Reserved.
 
 #include "Project_E.h"
 #include "Modules/ModuleManager.h"
