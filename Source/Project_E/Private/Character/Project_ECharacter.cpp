@@ -5,13 +5,18 @@
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
 
-AProject_ECharacter::AProject_ECharacter()
+AProject_ECharacter::AProject_ECharacter() :
+	CollisionBox(nullptr),
+	CharacterMeshMinSize(2.f),
+	CharacterMeshMaxSize(8.f),
+	GrowStep(1.f)	
 {
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -40,6 +45,13 @@ AProject_ECharacter::AProject_ECharacter()
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Character mesh setup
+	CharacterMesh = this->FindComponentByClass<USkeletalMeshComponent>();
+	CharacterMesh->SetRelativeScale3D(FVector(CharacterMeshMinSize, CharacterMeshMinSize, CharacterMeshMinSize));
+
+	// Collision setup
+	CollisionBox = this->FindComponentByClass<UBoxComponent>();
+
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
@@ -48,4 +60,15 @@ AProject_ECharacter::AProject_ECharacter()
 void AProject_ECharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+
+}
+
+void AProject_ECharacter::GrowOnStop()
+{
+	if (CharacterMesh->GetRelativeScale3D().X <= CharacterMeshMaxSize && CharacterMesh->GetRelativeScale3D().Y <= CharacterMeshMaxSize && CharacterMesh->GetRelativeScale3D().Z <= CharacterMeshMaxSize)
+	{
+		CharacterMesh->SetRelativeScale3D(CharacterMesh->GetRelativeScale3D() + FVector(GrowStep, GrowStep, GrowStep));
+		if(CollisionBox  != nullptr)
+			CollisionBox->SetBoxExtent(CharacterMesh->GetRelativeScale3D());
+	}
 }
