@@ -55,6 +55,10 @@ AProject_ECharacter::AProject_ECharacter() :
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &AProject_ECharacter::OnHit);
+	
+
 }
 
 void AProject_ECharacter::Tick(float DeltaSeconds)
@@ -71,4 +75,19 @@ void AProject_ECharacter::GrowOnStop()
 		if(CollisionBox  != nullptr)
 			CollisionBox->SetBoxExtent(CharacterMesh->GetRelativeScale3D());
 	}
+}
+
+void AProject_ECharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	HitComponent->GetOwner()->SetActorLocation(location);
+	CharacterMesh->SetRelativeScale3D(FVector(1.0f, 1.0f, 1.0f));
+	if (CollisionBox != nullptr) {
+		CollisionBox->SetBoxExtent(CharacterMesh->GetRelativeScale3D());
+	}
+}
+
+void AProject_ECharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	location = GetCapsuleComponent()->GetComponentLocation();
 }

@@ -52,5 +52,12 @@ private:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "10.0", UIMin = "0.0", UIMax = "10.0"))
 	float GrowStep;
 
+	UFUNCTION(BlueprintCallable)
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	void BeginPlay();
+
+	UPROPERTY(EditAnywhere)
+	FVector location = FVector3d(350, 2450, 50);
 };
 
