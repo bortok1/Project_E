@@ -4,7 +4,6 @@
 #include "Character/EPawn.h"
 
 #include "Camera/CameraComponent.h"
-#include "Components/BoxComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
@@ -14,7 +13,7 @@ AEPawn::AEPawn()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// Character mesh setup
-	CharacterMesh = CreateOptionalDefaultSubobject<UBoxComponent>(TEXT("Mesh"));
+	CharacterMesh = CreateOptionalDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	RootComponent = CharacterMesh;
 	
 	// Create a camera boom...
@@ -35,11 +34,8 @@ void AEPawn::GrowOnStop()
 {
 	if (CharacterMesh->GetRelativeScale3D().X <= ActorMaxSize && CharacterMesh->GetRelativeScale3D().Y <= ActorMaxSize && CharacterMesh->GetRelativeScale3D().Z <= ActorMaxSize)
 	{
-		Size++;
-		CharacterMesh->SetRelativeScale3D(CharacterMesh->GetRelativeScale3D() + FVector(GrowStep, GrowStep, GrowStep));
-		FVector Location = GetActorLocation();
-		Location.Z += GrowStep;
-		this->SetActorLocation(Location);
+		CharacterMesh->SetRelativeScale3D(CharacterMesh->GetRelativeScale3D() + FVector(GrowStep, GrowStep, 0));
+		Mass += GrowStep;
 	}
 }
 

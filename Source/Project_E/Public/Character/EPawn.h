@@ -26,8 +26,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	class UBoxComponent* CharacterMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* CharacterMesh;
 
 public:
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
@@ -46,9 +46,6 @@ private:
 	UPROPERTY(Category="Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "10.0", UIMin = "0.0", UIMax = "10.0"))
 	float GrowStep = 1.f;
 
-	UPROPERTY(Category="Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "10.0", UIMin = "0.0", UIMax = "10.0"))
-	int Size = 0;
-	
 	UPROPERTY(Category="Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
 	float Mass = 1.f;
 	
@@ -67,5 +64,4 @@ public:
 	[[nodiscard]] float GetSpeed() const {return Speed;}
 	[[nodiscard]] float GetFriction() const {return Friction;}
 	[[nodiscard]] float GetGrowStep() const {return GrowStep;}
-	[[nodiscard]] int GetSize() const {return Size;}
 };
