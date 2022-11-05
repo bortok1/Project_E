@@ -18,6 +18,7 @@ class PROJECT_E_API AEPlayerController : public APlayerController
 	AEPlayerController();
 
 	virtual void PlayerTick(float DeltaTime) override;
+	void Grow();
 	virtual void SetupInputComponent() override;
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/EMovementComponent.h"
 #include "GameFramework/Pawn.h"
 #include "EPawn.generated.h"
 
@@ -16,16 +15,7 @@ public:
 	// Sets default values for this pawn's properties
 	AEPawn();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	/** Returns TopDownCameraComponent subobject **/
-	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	void GrowOnStop();
 
 private:
 	/** Top down camera */
@@ -36,34 +26,46 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USkeletalMeshComponent* CharacterMesh;
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* CharacterMesh;
 
-	UPROPERTY()
-	class UBoxComponent* CollisionBox;
+public:
+	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
-	UPROPERTY()
-	UEMovementComponent* EMovementComponent;
+private:
+	/** If equal or lower cube can't get smaller*/
+	UPROPERTY(Category="Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
+	float ActorMinSize = 2.f;
 
-	UPROPERTY(Category="Movement", EditAnywhere)
+	/** If equal or higer cube can't grow*/
+	UPROPERTY(Category="Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
+	float ActorMaxSize = 8.f;
+
+	/** How much the cube grow every instance (added value) */
+	UPROPERTY(Category="Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "10.0", UIMin = "0.0", UIMax = "10.0"))
+	float GrowStep = 1.f;
+
+	UPROPERTY(Category="Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "10.0", UIMin = "0.0", UIMax = "10.0"))
+	int Size = 0;
+	
+	UPROPERTY(Category="Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
 	float Mass = 1.f;
 	
-	UPROPERTY(Category="Movement", EditAnywhere)
+	UPROPERTY(Category="Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
 	float AngularDumping = 20.f;
 	
-	UPROPERTY(Category="Movement", EditAnywhere)
+	UPROPERTY(Category="Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
 	float Speed = .01f;
 	
-	UPROPERTY(Category="Movement", EditAnywhere)
+	UPROPERTY(Category="Movement", EditAnywhere, meta = (ClampMin = 0.0001, ClampMax = 1, UIMin = 0.0001, UIMax = 1))
 	float Friction = 0.95f;
 	
 public:
 	[[nodiscard]] float GetMass() const {return Mass;}
-
 	[[nodiscard]] float GetAngularDumping() const {return AngularDumping;}
-
 	[[nodiscard]] float GetSpeed() const {return Speed;}
-
 	[[nodiscard]] float GetFriction() const {return Friction;}
-
+	[[nodiscard]] float GetGrowStep() const {return GrowStep;}
+	[[nodiscard]] int GetSize() const {return Size;}
 };

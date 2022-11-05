@@ -4,6 +4,7 @@
 #include "Character/EPawn.h"
 
 #include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
@@ -13,9 +14,8 @@ AEPawn::AEPawn()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// Character mesh setup
-	CharacterMesh = CreateOptionalDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	CharacterMesh = CreateOptionalDefaultSubobject<UBoxComponent>(TEXT("Mesh"));
 	RootComponent = CharacterMesh;
-	// CharacterMesh->SetupAttachment(RootComponent);
 	
 	// Create a camera boom...
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -31,17 +31,15 @@ AEPawn::AEPawn()
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 }
 
-// Called every frame
-void AEPawn::Tick(float DeltaTime)
+void AEPawn::GrowOnStop()
 {
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	if (CharacterMesh->GetRelativeScale3D().X <= ActorMaxSize && CharacterMesh->GetRelativeScale3D().Y <= ActorMaxSize && CharacterMesh->GetRelativeScale3D().Z <= ActorMaxSize)
+	{
+		Size++;
+		CharacterMesh->SetRelativeScale3D(CharacterMesh->GetRelativeScale3D() + FVector(GrowStep, GrowStep, GrowStep));
+		FVector Location = GetActorLocation();
+		Location.Z += GrowStep;
+		this->SetActorLocation(Location);
+	}
 }
 

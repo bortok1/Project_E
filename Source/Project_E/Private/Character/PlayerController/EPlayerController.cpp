@@ -34,9 +34,11 @@ void AEPlayerController::PlayerTick(float DeltaTime)
 		{
 			FHitResult Hit;
 			GetHitResultUnderCursor(ECC_Visibility, true, Hit);
+			FVector HitLocation = Hit.Location;
+			FVector ActorLocation = EPawn->GetActorLocation();
 			
-			FVector WorldDirection = (Hit.Location - EPawn->GetActorLocation()).GetSafeNormal();
-			WorldDirection.Z = 0.f;
+			FVector WorldDirection = (HitLocation - ActorLocation).GetSafeNormal();
+			WorldDirection.Z = 0.;
 			
 			Acceleration = (WorldDirection * EPawn->GetSpeed() / DeltaTime) / EPawn->GetMass();
 			Velocity += Acceleration;
@@ -57,6 +59,13 @@ void AEPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AEPlayerController::OnSetDestinationPressed);
 	InputComponent->BindAction("SetDestination", IE_Released, this, &AEPlayerController::OnSetDestinationReleased);
+	
+	InputComponent->BindAction("Grow", IE_Pressed, this, &AEPlayerController::Grow);
+}
+
+void AEPlayerController::Grow()
+{
+	EPawn->GrowOnStop();
 }
 
 void AEPlayerController::OnSetDestinationPressed()
