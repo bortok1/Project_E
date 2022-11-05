@@ -1,6 +1,8 @@
 // Copyright Bean Bin, All Rights Reserved.
 
 #include "LevelDesign/SimpleTeleporter.h"
+
+#include "Character/EPawn.h"
 #include "GameFramework/Character.h"
 
 // Sets default values
@@ -15,17 +17,12 @@ ASimpleTeleporter::ASimpleTeleporter()
 	CollisionMesh->OnComponentBeginOverlap.AddDynamic(this, &ASimpleTeleporter::OnBoxBeginOverlap);
 }
 
-void ASimpleTeleporter::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-}
-
 void ASimpleTeleporter::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
                                           UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(Cast<ACharacter>(OtherActor))
+	if(Cast<AEPawn>(OtherActor))
 	{
-		OtherActor->SetActorLocation(NewLocation);
+		OtherActor->TeleportTo(NewLocation, OtherActor->GetActorRotation());
 	}
 }
 

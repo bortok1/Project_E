@@ -14,13 +14,11 @@ class PROJECT_E_API ASimpleTeleporter : public AActor
 	
 public:
 	UPROPERTY(EditAnywhere)
-	FVector NewLocation = FVector3d(350, 2450, 50);
+	FVector NewLocation = FVector3d(350, 2450, 100);
 	
 	// Sets default values for this actor's properties
 	ASimpleTeleporter();
-	
-protected:
-	virtual void Tick(float DeltaSeconds) override;
+
 private:
 	UPROPERTY()
 	UBoxComponent* CollisionMesh;

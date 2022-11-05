@@ -4,16 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "Project_EGameMode.generated.h"
+#include "EGameMode.generated.h"
 
-UCLASS(minimalapi)
-class AProject_EGameMode : public AGameModeBase
+/**
+ * 
+ */
+UCLASS()
+class PROJECT_E_API AEGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-public:
-	AProject_EGameMode();
+	AEGameMode();
 };
-
-
-
