@@ -1,4 +1,4 @@
-.sln
+*.sln
 .git/
 .idea/
 .vs/
