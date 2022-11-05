@@ -12,8 +12,12 @@ class PROJECT_E_API AEPawn : public APawn
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
 	AEPawn();
+	
+	
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit);
 
 	void GrowOnStop();
 
@@ -28,7 +32,14 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* CharacterMesh;
-
+	
+	UPROPERTY(EditAnywhere)
+	FVector StartLocation = FVector(1200.f, 1500.f, 100.f);
+	
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UBoxComponent* BoxCollider = nullptr;
+	
 public:
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

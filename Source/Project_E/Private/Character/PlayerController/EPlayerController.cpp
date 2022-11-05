@@ -46,7 +46,13 @@ void AEPlayerController::PlayerTick(float DeltaTime)
 		}
 		if(!Velocity.IsZero())
 		{
-			EPawn->TeleportTo(EPawn->GetActorLocation() + Velocity, Rotation.Rotation());
+			if(!EPawn->TeleportTo(EPawn->GetActorLocation() + Velocity, Rotation.Rotation()))
+			{
+				Acceleration = FVector::Zero();
+				Velocity = FVector::Zero();
+				Rotation = FVector::Zero();
+				EPawn->OnHit(nullptr, nullptr, nullptr, FVector::Zero(), FHitResult());
+			}
 			Velocity *= EPawn->GetFriction();
 		}
 	}

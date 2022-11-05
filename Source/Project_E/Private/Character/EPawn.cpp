@@ -39,3 +39,8 @@ void AEPawn::GrowOnStop()
 	}
 }
 
+void AEPawn::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	this->TeleportTo(StartLocation, FRotator(0,0,0));
+}
