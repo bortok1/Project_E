@@ -19,12 +19,14 @@ class PROJECT_E_API AEPlayerController : public APlayerController
 
 	virtual void PlayerTick(float DeltaTime) override;
 	void Grow();
+	void Shrink();
 	virtual void SetupInputComponent() override;
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
 	virtual void BeginPlayingState() override;
 	
 	bool bInputPressed;
+	bool bFirstInput;
 
 	FVector Velocity;
 	FVector Acceleration;

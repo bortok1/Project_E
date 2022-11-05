@@ -12,6 +12,7 @@ AEPlayerController::AEPlayerController()
 	DefaultMouseCursor = EMouseCursor::Default;
 
 	bInputPressed = false;
+	bFirstInput = false;
 	Velocity = FVector::Zero();
 	Acceleration = FVector::Zero();
 	Rotation = FVector::Zero();
@@ -55,6 +56,9 @@ void AEPlayerController::PlayerTick(float DeltaTime)
 			}
 			Velocity *= EPawn->GetFriction();
 		}
+		else if(bFirstInput) {
+			EPawn->GrowBox();
+		}
 	}
 }
 
@@ -67,17 +71,24 @@ void AEPlayerController::SetupInputComponent()
 	InputComponent->BindAction("SetDestination", IE_Released, this, &AEPlayerController::OnSetDestinationReleased);
 	
 	InputComponent->BindAction("Grow", IE_Pressed, this, &AEPlayerController::Grow);
+	InputComponent->BindAction("Shrink", IE_Pressed, this, &AEPlayerController::Shrink);
 }
 
 void AEPlayerController::Grow()
 {
-	EPawn->GrowOnStop();
+	EPawn->GrowBox();
+}
+
+void AEPlayerController::Shrink()
+{
+	EPawn->ShrinkBox();
 }
 
 void AEPlayerController::OnSetDestinationPressed()
 {
 	// We flag that the input is being pressed
 	bInputPressed = true;
+	bFirstInput = true;
 	// Just in case the character was moving because of a previous short press we stop it
 	StopMovement();
 }
