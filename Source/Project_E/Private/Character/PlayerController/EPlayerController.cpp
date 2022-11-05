@@ -4,6 +4,7 @@
 #include "Character/PlayerController/EPlayerController.h"
 
 #include "Character/EPawn.h"
+#include "TimerManager.h"
 #include "Math/UnitConversion.h"
 
 AEPlayerController::AEPlayerController()
@@ -21,7 +22,6 @@ AEPlayerController::AEPlayerController()
 void AEPlayerController::BeginPlayingState()
 {
 	Super::BeginPlayingState();
-	
 	EPawn = Cast<AEPawn>(GetPawn());
 }
 
@@ -47,6 +47,7 @@ void AEPlayerController::PlayerTick(float DeltaTime)
 		}
 		if(Velocity.Length() > 0.01f)
 		{
+			GetWorldTimerManager().ClearTimer(UnusedHandle);
 			if(!EPawn->TeleportTo(EPawn->GetActorLocation() + Velocity, Rotation.Rotation()))
 			{
 				Acceleration = FVector::Zero();
@@ -56,15 +57,13 @@ void AEPlayerController::PlayerTick(float DeltaTime)
 			}
 			Velocity *= EPawn->GetFriction();
 		}
-		else if(bFirstInput) {
-			EPawn->GrowBox();
+		else if(Velocity.Length() != 0) {
+			if (bFirstInput) {
+				GetWorld()->GetTimerManager().SetTimer(
+					UnusedHandle, this, &AEPlayerController::Grow, EPawn->GetGrowSpeed(), true, EPawn->GetGrowSpeed());
+			}
 			Velocity = FVector::Zero();
 		}
-		else
-		{
-			Velocity = FVector::Zero();
-		}
-		
 	}
 }
 
@@ -82,6 +81,7 @@ void AEPlayerController::SetupInputComponent()
 
 void AEPlayerController::Grow()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "Grow");
 	EPawn->GrowBox();
 }
 
@@ -104,6 +104,4 @@ void AEPlayerController::OnSetDestinationReleased()
 	// Player is no longer pressing the input
 	bInputPressed = false;
 }
-
-
 

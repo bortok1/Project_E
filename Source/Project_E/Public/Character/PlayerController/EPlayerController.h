@@ -32,6 +32,8 @@ class PROJECT_E_API AEPlayerController : public APlayerController
 	FVector Acceleration;
 	FVector Rotation;
 
+	FTimerHandle UnusedHandle;
+
 	UPROPERTY()
 	AEPawn* EPawn;
 };

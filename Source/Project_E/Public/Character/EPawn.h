@@ -28,6 +28,7 @@ public:
 	UFUNCTION()
 		void ShrinkBox();
 
+
 private:
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -55,6 +56,12 @@ private:
 	UPROPERTY(Category = "Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "10.0", UIMin = "0.0", UIMax = "10.0"))
 		float GrowStep = 1.f;
 
+	UPROPERTY(Category = "Growth", EditAnywhere, meta = (ClampMin = 0.0001, ClampMax = 1, UIMin = 0.0001, UIMax = 1))
+		float GrowSpeed = 0.05f;
+
+	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
+		float DefaultMass = 1.f;
+	
 	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
 		float Mass = 1.f;
 
@@ -67,6 +74,7 @@ private:
 	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, ClampMax = 1, UIMin = 0.0001, UIMax = 1))
 		float Friction = 0.95f;
 
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UBoxComponent* BoxCollider = nullptr;
@@ -77,4 +85,5 @@ public:
 	[[nodiscard]] float GetSpeed() const {return Speed;}
 	[[nodiscard]] float GetFriction() const {return Friction;}
 	[[nodiscard]] float GetGrowStep() const { return GrowStep; }
+	[[nodiscard]] float GetGrowSpeed() const { return GrowSpeed; }
 };
