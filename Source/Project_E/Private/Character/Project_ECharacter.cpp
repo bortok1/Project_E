@@ -18,9 +18,15 @@ AProject_ECharacter::AProject_ECharacter() :
 	CharacterMeshMaxSize(8.f),
 	GrowStep(1.f)	
 {
+
+	// Collision setup
+	CollisionBox = CreateDefaultSubobject<UBoxComponent>(FName("Collider"));
+	RootComponent = CollisionBox;
+	
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
+	GetCapsuleComponent()->SetupAttachment(CollisionBox);
+	
 	// Don't rotate character to camera direction
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -48,9 +54,8 @@ AProject_ECharacter::AProject_ECharacter() :
 	// Character mesh setup
 	CharacterMesh = this->FindComponentByClass<USkeletalMeshComponent>();
 	CharacterMesh->SetRelativeScale3D(FVector(CharacterMeshMinSize, CharacterMeshMinSize, CharacterMeshMinSize));
-
-	// Collision setup
-	CollisionBox = this->FindComponentByClass<UBoxComponent>();
+	CharacterMesh->SetupAttachment(RootComponent);
+	
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
@@ -60,6 +65,9 @@ AProject_ECharacter::AProject_ECharacter() :
 void AProject_ECharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+
+	this->SetActorLocation(GetCapsuleComponent()->GetComponentLocation());
+	GetCapsuleComponent()->SetRelativeLocation(FVector::Zero());
 
 }
 
