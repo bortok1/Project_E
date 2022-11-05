@@ -45,7 +45,25 @@ private:
 	UPROPERTY()
 	UEMovementComponent* EMovementComponent;
 
+	UPROPERTY(Category="Movement", EditAnywhere)
+	float Mass = 1.f;
+	
+	UPROPERTY(Category="Movement", EditAnywhere)
+	float AngularDumping = 20.f;
+	
+	UPROPERTY(Category="Movement", EditAnywhere)
+	float Speed = .01f;
+	
+	UPROPERTY(Category="Movement", EditAnywhere)
+	float Friction = 0.95f;
+	
 public:
-	void MoveFromAToB(FVector NewVector);
+	[[nodiscard]] float GetMass() const {return Mass;}
+
+	[[nodiscard]] float GetAngularDumping() const {return AngularDumping;}
+
+	[[nodiscard]] float GetSpeed() const {return Speed;}
+
+	[[nodiscard]] float GetFriction() const {return Friction;}
 
 };

@@ -4,8 +4,6 @@
 #include "Character/EPawn.h"
 
 #include "Camera/CameraComponent.h"
-#include "Components/BoxComponent.h"
-#include "GameFramework/MovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
@@ -13,10 +11,6 @@ AEPawn::AEPawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	// Collision setup
-	// CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
-	// RootComponent = CollisionBox;
 	
 	// Character mesh setup
 	CharacterMesh = CreateOptionalDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
@@ -49,10 +43,5 @@ void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-}
-
-void AEPawn::MoveFromAToB(FVector NewVector)
-{
-	this->SetActorLocation(NewVector);
 }
 

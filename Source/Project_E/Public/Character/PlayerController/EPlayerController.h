@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "EPlayerController.generated.h"
 
+class AEPawn;
 /**
  * 
  */
@@ -20,10 +21,14 @@ class PROJECT_E_API AEPlayerController : public APlayerController
 	virtual void SetupInputComponent() override;
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
+	virtual void BeginPlayingState() override;
 	
-private:
 	bool bInputPressed;
 
-	UPROPERTY()
 	FVector Velocity;
+	FVector Acceleration;
+	FVector Rotation;
+
+	UPROPERTY()
+	AEPawn* EPawn;
 };
