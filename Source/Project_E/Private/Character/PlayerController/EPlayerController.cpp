@@ -45,7 +45,7 @@ void AEPlayerController::PlayerTick(float DeltaTime)
 			Velocity += Acceleration;
 			Rotation = (Rotation * (EPawn->GetAngularDumping() - 1) + Acceleration) / EPawn->GetAngularDumping();
 		}
-		if(!Velocity.IsZero())
+		if(Velocity.Length() > 0.01f)
 		{
 			if(!EPawn->TeleportTo(EPawn->GetActorLocation() + Velocity, Rotation.Rotation()))
 			{
@@ -58,7 +58,13 @@ void AEPlayerController::PlayerTick(float DeltaTime)
 		}
 		else if(bFirstInput) {
 			EPawn->GrowBox();
+			Velocity = FVector::Zero();
 		}
+		else
+		{
+			Velocity = FVector::Zero();
+		}
+		
 	}
 }
 
