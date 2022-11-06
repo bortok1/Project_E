@@ -54,10 +54,7 @@ void AEPawn::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimi
 	//CharacterMesh->SetRelativeScale3D(FVector(ActorMinSize, ActorMinSize, 0));
 	this->TeleportTo(StartLocation, FRotator(0,0,0));
 
-	if (CharacterMesh->GetRelativeScale3D().X >= ActorMinSize && CharacterMesh->GetRelativeScale3D().Y >= ActorMinSize)
-	{
-		//CharacterMesh->SetRelativeScale3D(FVector(ActorMinSize, ActorMinSize, 0));
-		//Mass = DefaultMass;
-	}
+	for (int i = 0; i < 10; i++)
+		this->ShrinkBox();
 }
 

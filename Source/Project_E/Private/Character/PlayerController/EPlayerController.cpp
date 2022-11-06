@@ -53,6 +53,8 @@ void AEPlayerController::PlayerTick(float DeltaTime)
 				Acceleration = FVector::Zero();
 				Velocity = FVector::Zero();
 				Rotation = FVector::Zero();
+				bInputPressed = false; 
+				bFirstInput = false;
 				EPawn->OnHit(nullptr, nullptr, nullptr, FVector::Zero(), FHitResult());
 			}
 			Velocity *= EPawn->GetFriction();
