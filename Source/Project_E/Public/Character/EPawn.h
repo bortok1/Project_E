@@ -46,11 +46,11 @@ private:
 
 	/** If equal or lower cube can't get smaller*/
 	UPROPERTY(Category = "Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
-		float ActorMinSize = 2.f;
+		float ActorMinSize = 1.f;
 
 	/** If equal or higer cube can't grow*/
 	UPROPERTY(Category = "Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
-		float ActorMaxSize = 8.f;
+		float ActorMaxSize = 4.f;
 
 	/** How much the cube grow every instance (added value) */
 	UPROPERTY(Category = "Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "10.0", UIMin = "0.0", UIMax = "10.0"))
@@ -63,7 +63,7 @@ private:
 		float DefaultMass = 1.f;
 	
 	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
-		float Mass = 1.f;
+		float Mass = DefaultMass;
 
 	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
 		float AngularDumping = 20.f;

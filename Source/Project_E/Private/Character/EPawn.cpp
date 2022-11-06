@@ -33,7 +33,7 @@ AEPawn::AEPawn()
 
 void AEPawn::GrowBox()
 {
-	if (CharacterMesh->GetRelativeScale3D().X <= ActorMaxSize && CharacterMesh->GetRelativeScale3D().Y <= ActorMaxSize)
+	if (CharacterMesh->GetRelativeScale3D().X < ActorMaxSize && CharacterMesh->GetRelativeScale3D().Y < ActorMaxSize)
 	{
 		CharacterMesh->SetRelativeScale3D(CharacterMesh->GetRelativeScale3D() + FVector(GrowStep, GrowStep, 0));
 		Mass += GrowStep;
@@ -41,7 +41,7 @@ void AEPawn::GrowBox()
 }
 void AEPawn::ShrinkBox()
 {
-	if (CharacterMesh->GetRelativeScale3D().X >= ActorMinSize && CharacterMesh->GetRelativeScale3D().Y >= ActorMinSize)
+	if (CharacterMesh->GetRelativeScale3D().X > ActorMinSize && CharacterMesh->GetRelativeScale3D().Y > ActorMinSize)
 	{
 		CharacterMesh->SetRelativeScale3D(CharacterMesh->GetRelativeScale3D() - FVector(GrowStep, GrowStep, 0));
 		Mass -= GrowStep;
@@ -51,10 +51,7 @@ void AEPawn::ShrinkBox()
 void AEPawn::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
-	//CharacterMesh->SetRelativeScale3D(FVector(ActorMinSize, ActorMinSize, 0));
+	CharacterMesh->SetRelativeScale3D(FVector(ActorMinSize, ActorMinSize, 1));
 	this->TeleportTo(StartLocation, FRotator(0,0,0));
-
-	for (int i = 0; i < 10; i++)
-		this->ShrinkBox();
 }
 
