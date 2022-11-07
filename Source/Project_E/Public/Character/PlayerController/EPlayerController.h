@@ -21,6 +21,7 @@ class PROJECT_E_API AEPlayerController : public APlayerController
 	void Grow();
 	void Shrink();
 	virtual void SetupInputComponent() override;
+	void Die();
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
 	virtual void BeginPlayingState() override;

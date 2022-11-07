@@ -10,7 +10,6 @@ UCLASS()
 class PROJECT_E_API AEPawn : public APawn
 {
 	GENERATED_BODY()
-
 public:
 	AEPawn();
 	
@@ -23,13 +22,15 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
 	UFUNCTION()
-		void GrowBox();
+		bool GrowBox();
 
 	UFUNCTION()
-		void ShrinkBox();
+		bool ShrinkBox();
 
 
-private:
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* CharacterMesh;
+	
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* TopDownCameraComponent;
@@ -38,9 +39,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USkeletalMeshComponent* CharacterMesh;
-	
+private:
 	UPROPERTY(EditAnywhere)
 	FVector StartLocation;
 

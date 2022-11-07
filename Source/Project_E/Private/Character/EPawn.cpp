@@ -9,13 +9,12 @@
 // Sets default values
 AEPawn::AEPawn()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	StartLocation = FVector(1200.f, 1500.f, 100.f);
-	// Character mesh setup
-	CharacterMesh = CreateOptionalDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	RootComponent = CharacterMesh;
+	
+	CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>("CharacterMesh");
+	SetRootComponent(CharacterMesh);
 	
 	// Create a camera boom...
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -31,21 +30,25 @@ AEPawn::AEPawn()
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 }
 
-void AEPawn::GrowBox()
+bool AEPawn::GrowBox()
 {
 	if (CharacterMesh->GetRelativeScale3D().X < ActorMaxSize && CharacterMesh->GetRelativeScale3D().Y < ActorMaxSize)
 	{
 		CharacterMesh->SetRelativeScale3D(CharacterMesh->GetRelativeScale3D() + FVector(GrowStep, GrowStep, 0));
 		Mass += GrowStep;
+		return true;
 	}
+	return false;
 }
-void AEPawn::ShrinkBox()
+bool AEPawn::ShrinkBox()
 {
 	if (CharacterMesh->GetRelativeScale3D().X > ActorMinSize && CharacterMesh->GetRelativeScale3D().Y > ActorMinSize)
 	{
 		CharacterMesh->SetRelativeScale3D(CharacterMesh->GetRelativeScale3D() - FVector(GrowStep, GrowStep, 0));
 		Mass -= GrowStep;
+		return true;
 	}
+	return false;
 }
 
 void AEPawn::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,

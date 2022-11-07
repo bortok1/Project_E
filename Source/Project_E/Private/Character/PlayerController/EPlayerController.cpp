@@ -28,7 +28,7 @@ void AEPlayerController::BeginPlayingState()
 void AEPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-
+	
 	if(EPawn)
 	{
 		if(bInputPressed)
@@ -41,23 +41,19 @@ void AEPlayerController::PlayerTick(float DeltaTime)
 			FVector WorldDirection = (HitLocation - ActorLocation).GetSafeNormal();
 			WorldDirection.Z = 0.;
 			
-			Acceleration = (WorldDirection * EPawn->GetSpeed() / DeltaTime) / EPawn->GetMass();
+			Acceleration = (WorldDirection * EPawn->GetSpeed() / DeltaTime) /*/ EPawn->GetMass()*/;
 			Velocity += Acceleration;
 			Rotation = (Rotation * (EPawn->GetAngularDumping() - 1) + Acceleration) / EPawn->GetAngularDumping();
 		}
 		if(Velocity.Length() > 0.01f)
 		{
-			GetWorldTimerManager().ClearTimer(UnusedHandle);
 			if(!EPawn->TeleportTo(EPawn->GetActorLocation() + Velocity, Rotation.Rotation()))
+				Die();
+			else
 			{
-				Acceleration = FVector::Zero();
-				Velocity = FVector::Zero();
-				Rotation = FVector::Zero();
-				bInputPressed = false; 
-				bFirstInput = false;
-				EPawn->OnHit(nullptr, nullptr, nullptr, FVector::Zero(), FHitResult());
+				Velocity *= EPawn->GetFriction();
+				GetWorldTimerManager().ClearTimer(UnusedHandle);
 			}
-			Velocity *= EPawn->GetFriction();
 		}
 		else if(Velocity.Length() != 0) {
 			if (bFirstInput) {
@@ -81,10 +77,21 @@ void AEPlayerController::SetupInputComponent()
 	InputComponent->BindAction("Shrink", IE_Pressed, this, &AEPlayerController::Shrink);
 }
 
+void AEPlayerController::Die()
+{
+	Acceleration = FVector::Zero();
+	Velocity = FVector::Zero();
+	Rotation = FVector::Zero();
+	bInputPressed = false; 
+	bFirstInput = false;
+	EPawn->OnHit(nullptr, nullptr, nullptr, FVector::Zero(), FHitResult());
+	GetWorldTimerManager().ClearTimer(UnusedHandle);
+}
+
 void AEPlayerController::Grow()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "Grow");
-	EPawn->GrowBox();
+	if (EPawn->GrowBox() && !EPawn->TeleportTo(EPawn->GetActorLocation() + Velocity + FVector(0.001f, 0.f,0.f), Rotation.Rotation(), true))
+		Die();
 }
 
 void AEPlayerController::Shrink()
@@ -94,16 +101,12 @@ void AEPlayerController::Shrink()
 
 void AEPlayerController::OnSetDestinationPressed()
 {
-	// We flag that the input is being pressed
 	bInputPressed = true;
 	bFirstInput = true;
-	// Just in case the character was moving because of a previous short press we stop it
-	StopMovement();
 }
 
 void AEPlayerController::OnSetDestinationReleased()
 {
-	// Player is no longer pressing the input
 	bInputPressed = false;
 }
 
