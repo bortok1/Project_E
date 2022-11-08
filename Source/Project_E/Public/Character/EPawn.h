@@ -14,8 +14,7 @@ public:
 	AEPawn();
 	
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit);
+	void OnHit(FVector StartLocation);
 
 
 	UFUNCTION()
@@ -46,9 +45,6 @@ public:
 	class USpringArmComponent* CameraBoom;
 
 private:
-	UPROPERTY(EditAnywhere)
-	FVector StartLocation;
-
 	/** If equal or lower cube can't get smaller*/
 	UPROPERTY(Category = "Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
 		float ActorMinSize = 1.f;

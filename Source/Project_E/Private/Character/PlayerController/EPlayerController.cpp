@@ -35,7 +35,7 @@ void AEPlayerController::BeginPlayingState()
 {
 	Super::BeginPlayingState();
 	EPawn = Cast<AEPawn>(GetPawn());
-
+	
 	FTimerHandle Handle;	
 	FTimerDelegate Delegate;
 	float DeltaTime = 0.013f;
@@ -96,7 +96,7 @@ void AEPlayerController::Die()
 	Rotation = FVector::Zero();
 	bInputPressed = false; 
 	bFirstInput = false;
-	EPawn->OnHit(nullptr, nullptr, nullptr, FVector::Zero(), FHitResult());
+	EPawn->OnHit(GetSpawnLocation());
 	GetWorldTimerManager().ClearTimer(UnusedHandle);
 }
 

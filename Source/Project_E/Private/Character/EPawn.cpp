@@ -11,8 +11,6 @@ AEPawn::AEPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	StartLocation = FVector(1200.f, 1500.f, 100.f);
-	
 	CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>("CharacterMesh");
 	SetRootComponent(CharacterMesh);
 
@@ -53,16 +51,16 @@ bool AEPawn::ShrinkBox()
 	return false;
 }
 
-void AEPawn::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+void AEPawn::OnHit(FVector StartLocation)
 {
 	CharacterMesh->SetRelativeScale3D(FVector(ActorMinSize, ActorMinSize, 1));
-	this->TeleportTo(StartLocation, FRotator(0,0,0));
+	Mass = DefaultMass;
+	this->TeleportTo(StartLocation, FRotator(0, 90, 0));
 }
 
 void AEPawn::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//Todo Nie dziala, trzeba zrobiæ zamiast blueprintu
+	//TODO: Nie dziala, trzeba zrobic zamiast blueprintu
 	//APickUp* pickUp = Cast<APickUp>(OtherActor);
 	//if (pickUp)
 	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "Hit");
