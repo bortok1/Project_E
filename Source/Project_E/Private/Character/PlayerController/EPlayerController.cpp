@@ -19,16 +19,40 @@ AEPlayerController::AEPlayerController()
 	Rotation = FVector::Zero();
 
 }
+
+void AEPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AEPlayerController::OnSetDestinationPressed);
+	InputComponent->BindAction("SetDestination", IE_Released, this, &AEPlayerController::OnSetDestinationReleased);
+	
+	InputComponent->BindAction("Grow", IE_Pressed, this, &AEPlayerController::Grow);
+	InputComponent->BindAction("Shrink", IE_Pressed, this, &AEPlayerController::Shrink);
+}
+
 void AEPlayerController::BeginPlayingState()
 {
 	Super::BeginPlayingState();
 	EPawn = Cast<AEPawn>(GetPawn());
+
+	FTimerHandle Handle;	
+	FTimerDelegate Delegate;
+	float DeltaTime = 0.013f;
+	Delegate.BindUObject(this, &AEPlayerController::MoveTick, DeltaTime);
+
+	if (GEngine)
+	{
+		UWorld* World = GEngine->GetWorldFromContextObjectChecked(this);
+		if (World)
+		{
+			World->GetTimerManager().SetTimer(Handle, Delegate, DeltaTime, true);
+		}
+	}
 }
 
-void AEPlayerController::PlayerTick(float DeltaTime)
+void AEPlayerController::MoveTick(float DeltaTime)
 {
-	Super::PlayerTick(DeltaTime);
-	
 	if(EPawn)
 	{
 		if(bInputPressed)
@@ -41,7 +65,7 @@ void AEPlayerController::PlayerTick(float DeltaTime)
 			FVector WorldDirection = (HitLocation - ActorLocation).GetSafeNormal();
 			WorldDirection.Z = 0.;
 			
-			Acceleration = (WorldDirection * EPawn->GetSpeed() / DeltaTime) /*/ EPawn->GetMass()*/;
+			Acceleration = (WorldDirection * EPawn->GetSpeed() / DeltaTime) / EPawn->GetMass();
 			Velocity += Acceleration;
 			Rotation = (Rotation * (EPawn->GetAngularDumping() - 1) + Acceleration) / EPawn->GetAngularDumping();
 		}
@@ -63,18 +87,6 @@ void AEPlayerController::PlayerTick(float DeltaTime)
 			Velocity = FVector::Zero();
 		}
 	}
-}
-
-void AEPlayerController::SetupInputComponent()
-{
-	// set up gameplay key bindings
-	Super::SetupInputComponent();
-
-	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AEPlayerController::OnSetDestinationPressed);
-	InputComponent->BindAction("SetDestination", IE_Released, this, &AEPlayerController::OnSetDestinationReleased);
-	
-	InputComponent->BindAction("Grow", IE_Pressed, this, &AEPlayerController::Grow);
-	InputComponent->BindAction("Shrink", IE_Pressed, this, &AEPlayerController::Shrink);
 }
 
 void AEPlayerController::Die()
@@ -109,4 +121,6 @@ void AEPlayerController::OnSetDestinationReleased()
 {
 	bInputPressed = false;
 }
+
+
 

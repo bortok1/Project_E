@@ -16,15 +16,14 @@ class PROJECT_E_API AEPlayerController : public APlayerController
 	GENERATED_BODY()
 
 	AEPlayerController();
-
-	virtual void PlayerTick(float DeltaTime) override;
+	virtual void SetupInputComponent() override;
+	virtual void BeginPlayingState() override;
+	void MoveTick(float DeltaTime);
+	void Die();
 	void Grow();
 	void Shrink();
-	virtual void SetupInputComponent() override;
-	void Die();
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
-	virtual void BeginPlayingState() override;
 	
 	bool bInputPressed;
 	bool bFirstInput;
