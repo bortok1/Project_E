@@ -2,7 +2,7 @@
 
 
 #include "Character/EPawn.h"
-
+#include "PickUp.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -15,6 +15,8 @@ AEPawn::AEPawn()
 	
 	CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>("CharacterMesh");
 	SetRootComponent(CharacterMesh);
+
+	CharacterMesh->OnComponentBeginOverlap.AddDynamic(this, &AEPawn::OnOverlap);
 	
 	// Create a camera boom...
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -56,5 +58,13 @@ void AEPawn::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimi
 {
 	CharacterMesh->SetRelativeScale3D(FVector(ActorMinSize, ActorMinSize, 1));
 	this->TeleportTo(StartLocation, FRotator(0,0,0));
+}
+
+void AEPawn::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	//Todo Nie dziala, trzeba zrobiæ zamiast blueprintu
+	//APickUp* pickUp = Cast<APickUp>(OtherActor);
+	//if (pickUp)
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "Hit");
 }
 
