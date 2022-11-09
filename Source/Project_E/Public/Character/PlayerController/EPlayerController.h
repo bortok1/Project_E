@@ -34,6 +34,8 @@ class PROJECT_E_API AEPlayerController : public APlayerController
 	
 	FTimerHandle UnusedHandle;
 
+	int8 GrowTimer;
+	
 	UPROPERTY()
 	AEPawn* EPawn;
 };

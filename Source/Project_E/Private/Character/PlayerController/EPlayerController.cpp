@@ -18,6 +18,7 @@ AEPlayerController::AEPlayerController()
 	Acceleration = FVector::Zero();
 	Rotation = FVector::Zero();
 
+	GrowTimer = 0;
 }
 
 void AEPlayerController::SetupInputComponent()
@@ -53,6 +54,7 @@ void AEPlayerController::BeginPlayingState()
 
 void AEPlayerController::MoveTick(float DeltaTime)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, Velocity.ToString());
 	if(EPawn)
 	{
 		if(bInputPressed)
@@ -86,6 +88,19 @@ void AEPlayerController::MoveTick(float DeltaTime)
 			}
 			Velocity = FVector::Zero();
 		}
+		if(bFirstInput && Velocity.Length() < 10.f / EPawn->GetMass())
+		{
+			GrowTimer++;
+
+			if(GrowTimer > 90)
+			{
+				Grow();
+			}
+		}
+		else
+		{
+			GrowTimer = 0;
+		}
 	}
 }
 
@@ -102,6 +117,7 @@ void AEPlayerController::Die()
 
 void AEPlayerController::Grow()
 {
+	GrowTimer = 0;
 	if (EPawn->GrowBox() && !EPawn->TeleportTo(EPawn->GetActorLocation() + Velocity + FVector(0.001f, 0.f,0.f), Rotation.Rotation(), true))
 		Die();
 }
