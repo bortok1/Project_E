@@ -54,7 +54,7 @@ void AEPlayerController::BeginPlayingState()
 
 void AEPlayerController::MoveTick(float DeltaTime)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, Velocity.ToString());
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, Velocity.ToString());
 	if(EPawn)
 	{
 		if(bInputPressed)
@@ -81,7 +81,7 @@ void AEPlayerController::MoveTick(float DeltaTime)
 				GetWorldTimerManager().ClearTimer(UnusedHandle);
 			}
 		}
-		else if(Velocity.Length() != 0) {
+		else if(Velocity.Length() <= 0.01f) {
 			if (bFirstInput) {
 				GetWorld()->GetTimerManager().SetTimer(
 					UnusedHandle, this, &AEPlayerController::Grow, EPawn->GetGrowSpeed(), true, EPawn->GetGrowSpeed());
