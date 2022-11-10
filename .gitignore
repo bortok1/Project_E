@@ -1,3 +1,4 @@
+*.log
 Project_E.sln
 .git/
 .idea/
