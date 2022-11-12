@@ -109,6 +109,12 @@ void AEPlayerController::Die()
 	GetWorldTimerManager().ClearTimer(GrowTimeHandle);
 }
 
+void AEPlayerController::Win()
+{
+	EPawn->WriteScoreTimer();
+	Die();
+}
+
 void AEPlayerController::Grow()
 {
 	GrowTimer = 0;

@@ -37,6 +37,7 @@ public:
 
 	bool StopTimer();
 
+	bool WriteScoreTimer();
 
 	UPROPERTY(EditAnywhere)
 		class UStaticMeshComponent* CharacterMesh;

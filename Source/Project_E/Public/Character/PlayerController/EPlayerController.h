@@ -20,6 +20,8 @@ class PROJECT_E_API AEPlayerController : public APlayerController
 	virtual void BeginPlayingState() override;
 	void MoveTick(float DeltaTime);
 	void Die();
+	UFUNCTION(BlueprintCallable)
+	void Win();
 	void Grow();
 	void Shrink();
 	void OnSetDestinationPressed();

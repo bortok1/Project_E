@@ -89,11 +89,19 @@ bool AEPawn::StopTimer()
 	return false;
 }
 
-
+bool AEPawn::WriteScoreTimer()
+{
+	if (TimerWidgetRef) {
+		FOutputDeviceNull er;
+		const TCHAR* command = TEXT("WriteScore");
+		TimerWidgetRef->CallFunctionByNameWithArguments(command, er, nullptr, true);
+		return true;
+	}
+	return false;
+}
 
 void AEPawn::OnHit(FVector StartLocation)
 {
-	
 	
 	CharacterMesh->SetRelativeScale3D(FVector(ActorMinSize, ActorMinSize, 1));
 	Mass = DefaultMass;
