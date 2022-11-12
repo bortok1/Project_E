@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "EPawn.generated.h"
 
 UCLASS()
@@ -12,9 +13,9 @@ class PROJECT_E_API AEPawn : public APawn
 	GENERATED_BODY()
 public:
 	AEPawn();
-	
+
 	UFUNCTION()
-	void OnHit(FVector StartLocation);
+		void OnHit(FVector StartLocation);
 
 
 	UFUNCTION()
@@ -34,15 +35,15 @@ public:
 
 
 	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* CharacterMesh;
-	
+		class UStaticMeshComponent* CharacterMesh;
+
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* TopDownCameraComponent;
+		class UCameraComponent* TopDownCameraComponent;
 
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+		class USpringArmComponent* CameraBoom;
 
 private:
 	/** If equal or lower cube can't get smaller*/
@@ -67,9 +68,13 @@ private:
 	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
 		float FOVStep = 10.f;
 
+	/** Max distance between player and camera in 2D */
+	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "100.0", ClampMax = "400.0", UIMin = "100.0", UIMax = "400.0"))
+		float CameraMaxOffset = 200.f;
+
 	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
 		float DefaultMass = 1.f;
-	
+
 	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
 		float Mass = DefaultMass;
 
@@ -85,13 +90,14 @@ private:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	class UBoxComponent* BoxCollider = nullptr;
-	
+		class UBoxComponent* BoxCollider = nullptr;
+
 public:
-	[[nodiscard]] float GetMass() const {return Mass;}
-	[[nodiscard]] float GetAngularDumping() const {return AngularDumping;}
-	[[nodiscard]] float GetSpeed() const {return Speed;}
-	[[nodiscard]] float GetFriction() const {return Friction;}
+	[[nodiscard]] float GetMass() const { return Mass; }
+	[[nodiscard]] float GetAngularDumping() const { return AngularDumping; }
+	[[nodiscard]] float GetSpeed() const { return Speed; }
+	[[nodiscard]] float GetFriction() const { return Friction; }
 	[[nodiscard]] float GetGrowStep() const { return GrowStep; }
 	[[nodiscard]] float GetGrowSpeed() const { return GrowSpeed; }
+	[[nodiscard]] float GetCameraMaxOffset() const { return CameraMaxOffset; }
 };

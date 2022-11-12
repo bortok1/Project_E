@@ -24,6 +24,7 @@ class PROJECT_E_API AEPlayerController : public APlayerController
 	void Shrink();
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
+	void MoveCamera();
 	
 	bool bInputPressed;
 	bool bFirstInput;

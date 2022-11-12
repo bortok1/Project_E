@@ -101,6 +101,8 @@ void AEPlayerController::MoveTick(float DeltaTime)
 		{
 			GrowTimer = 0;
 		}
+
+		MoveCamera();
 	}
 }
 
@@ -136,6 +138,33 @@ void AEPlayerController::OnSetDestinationPressed()
 void AEPlayerController::OnSetDestinationReleased()
 {
 	bInputPressed = false;
+}
+
+void AEPlayerController::MoveCamera()
+{
+	FVector EPawnLocation = EPawn->GetActorLocation();
+	FVector PlaneOrigin(0.0f, 0.0f, EPawnLocation.Z);
+	FVector CursorLocation, CursorRotation;
+	if (DeprojectMousePositionToWorld(CursorLocation, CursorRotation))
+	{
+		CursorLocation = FMath::LinePlaneIntersection(
+			CursorLocation,
+			CursorLocation + CursorRotation,
+			PlaneOrigin,
+			FVector::UpVector);
+	}
+	else
+	{
+		CursorLocation = EPawnLocation;
+	}
+	EPawnLocation = FVector(EPawnLocation.X, EPawnLocation.Y, 0);
+	CursorLocation = FVector(CursorLocation.X, CursorLocation.Y, 0);
+	FVector Normalized = (CursorLocation - EPawnLocation).GetSafeNormal();
+	float Distance = FVector::Distance(EPawnLocation, CursorLocation);
+	float BoomZ = EPawn->CameraBoom->GetComponentToWorld().GetLocation().Z;
+	FVector NewCameraLocation = Normalized * FMath::Clamp(Distance * 0.5f, 0.0, EPawn->GetCameraMaxOffset()) + EPawnLocation;
+	NewCameraLocation.Z = BoomZ;
+	EPawn->CameraBoom->SetWorldLocation(NewCameraLocation);
 }
 
 
