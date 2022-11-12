@@ -32,9 +32,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 		bool ShrinkBox();
 
-	UFUNCTION(BlueprintCallable)
-		bool ResetTimer();
-
 
 	UPROPERTY(EditAnywhere)
 		class UStaticMeshComponent* CharacterMesh;
@@ -50,7 +47,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> TimerWidget;
 
-	UPROPERTY(BlueprintReadOnly)
 	UUserWidget* TimerWidgetRef;
 
 private:

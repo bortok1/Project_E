@@ -14,7 +14,6 @@ AEPlayerController::AEPlayerController()
 
 	bInputPressed = false;
 	bFirstInput = false;
-	bResetTimer = true;
 	Velocity = FVector::Zero();
 	Acceleration = FVector::Zero();
 	Rotation = FVector::Zero();
@@ -60,10 +59,6 @@ void AEPlayerController::MoveTick(float DeltaTime)
 	{
 		if(bInputPressed)
 		{
-			if (bFirstInput && bResetTimer) {
-				bResetTimer = false;
-				EPawn->ResetTimer();
-			}
 			FHitResult Hit;
 			GetHitResultUnderCursor(ECC_Visibility, true, Hit);
 			FVector HitLocation = Hit.Location;
@@ -118,7 +113,6 @@ void AEPlayerController::Die()
 	Rotation = FVector::Zero();
 	bInputPressed = false; 
 	bFirstInput = false;
-	bResetTimer = true;
 	EPawn->OnHit(GetSpawnLocation());
 	GetWorldTimerManager().ClearTimer(UnusedHandle);
 }

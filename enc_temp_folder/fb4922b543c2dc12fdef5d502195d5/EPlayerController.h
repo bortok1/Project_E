@@ -28,7 +28,6 @@ class PROJECT_E_API AEPlayerController : public APlayerController
 	
 	bool bInputPressed;
 	bool bFirstInput;
-	bool bResetTimer;
 
 	FVector Velocity;
 	FVector Acceleration;

@@ -41,7 +41,6 @@ AEPawn::AEPawn()
 		TimerWidgetClass = BP_TimerWidgetClass.Class;
 	}
 	TimerWidgetRef = CreateWidget<UUserWidget>(GetWorld(), TimerWidgetClass);
-	
 }
 
 bool AEPawn::GrowBox()
@@ -67,22 +66,13 @@ bool AEPawn::ShrinkBox()
 	return false;
 }
 
-bool AEPawn::ResetTimer()
+void AEPawn::OnHit(FVector StartLocation)
 {
 	if (TimerWidgetRef) {
 		FOutputDeviceNull er;
 		const TCHAR* command = TEXT("Reset");
 		TimerWidgetRef->CallFunctionByNameWithArguments(command, er, nullptr, true);
-		return true;
 	}
-	return false;
-}
-
-
-
-void AEPawn::OnHit(FVector StartLocation)
-{
-	
 	
 	CharacterMesh->SetRelativeScale3D(FVector(ActorMinSize, ActorMinSize, 1));
 	Mass = DefaultMass;
