@@ -15,7 +15,7 @@ class PROJECT_E_API ATriggerBoxDoor : public ATriggerBox
 public:
 	ATriggerBoxDoor();
 
-protected:
+private:
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
@@ -23,10 +23,15 @@ protected:
 	UFUNCTION()
 	void CloseDoors();
 
+	void BeginPlay();
+
 	UPROPERTY(EditAnywhere)
-		TArray<AActor*> LinkedDoors;
+	TArray<AActor*> LinkedDoors;
 
 	UPROPERTY()
-	FTimerHandle MyTimerHandle;
+	FTimerHandle Timer;
+
+	UPROPERTY()
+	TArray<FVector> StartLocation;
 
 };

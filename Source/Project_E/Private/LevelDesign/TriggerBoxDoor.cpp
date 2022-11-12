@@ -13,14 +13,17 @@ ATriggerBoxDoor::ATriggerBoxDoor()
 
 void ATriggerBoxDoor::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("RUNNING OVERLAP"));
+	int i = 0;
 	if (AEPawn* Pawn = Cast<AEPawn>(OtherActor)) {
 		for (AActor* Door : LinkedDoors) {
 			if (Door) {
 				FVector CurrentLocation = Door->GetActorLocation();
-				CurrentLocation.Z -= 200.0f;
+				if (CurrentLocation == StartLocation[i]) {
+					CurrentLocation.Z -= 200.0f;
+				}
 				Door->SetActorLocation(CurrentLocation);
 			}
+			i++;
 		}
 	}
 }
@@ -35,7 +38,7 @@ void ATriggerBoxDoor::OnComponentEndOverlap(UPrimitiveComponent* OverlappedCompo
 		else if (ScaleX == 2) { duration = 4.0f; }
 		else if (ScaleX == 3) { duration = 6.0f; }
 		else { duration = 8.0f; }
-		GetWorldTimerManager().SetTimer(MyTimerHandle, this, &ATriggerBoxDoor::CloseDoors, duration, false);
+		GetWorldTimerManager().SetTimer(Timer, this, &ATriggerBoxDoor::CloseDoors, duration, false);
 
 	}
 }
@@ -47,6 +50,17 @@ void ATriggerBoxDoor::CloseDoors()
 			FVector CurrentLocation = Door->GetActorLocation();
 			CurrentLocation.Z += 200.0f;
 			Door->SetActorLocation(CurrentLocation);
+		}
+	}
+}
+
+void ATriggerBoxDoor::BeginPlay()
+{
+	Super::BeginPlay();
+	for (AActor* Door : LinkedDoors) {
+		if (Door) {
+			FVector StartingLocation = Door->GetActorLocation();
+			StartLocation.Add(StartingLocation);
 		}
 	}
 }
