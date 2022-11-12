@@ -60,6 +60,13 @@ private:
 	UPROPERTY(Category = "Growth", EditAnywhere, meta = (ClampMin = 0.0001, ClampMax = 1, UIMin = 0.0001, UIMax = 1))
 		float GrowSpeed = 0.05f;
 
+	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "180.0", UIMin = "0.0", UIMax = "180.0"))
+		float DefaultFOV = 90.f;
+
+	/** How much Field Of View grow every instance) */
+	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
+		float FOVStep = 10.f;
+
 	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
 		float DefaultMass = 1.f;
 	

@@ -20,7 +20,7 @@ AEPawn::AEPawn()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when character does
-	CameraBoom->TargetArmLength = 800.f;
+	CameraBoom->TargetArmLength = 1000.f;
 	CameraBoom->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
@@ -36,6 +36,7 @@ bool AEPawn::GrowBox()
 	{
 		CharacterMesh->SetRelativeScale3D(CharacterMesh->GetRelativeScale3D() + FVector(GrowStep, GrowStep, 0));
 		Mass += GrowStep;
+		TopDownCameraComponent->FieldOfView += FOVStep;
 		return true;
 	}
 	return false;
@@ -46,6 +47,7 @@ bool AEPawn::ShrinkBox()
 	{
 		CharacterMesh->SetRelativeScale3D(CharacterMesh->GetRelativeScale3D() - FVector(GrowStep, GrowStep, 0));
 		Mass -= GrowStep;
+		TopDownCameraComponent->FieldOfView -= FOVStep;
 		return true;
 	}
 	return false;
@@ -55,6 +57,7 @@ void AEPawn::OnHit(FVector StartLocation)
 {
 	CharacterMesh->SetRelativeScale3D(FVector(ActorMinSize, ActorMinSize, 1));
 	Mass = DefaultMass;
+	TopDownCameraComponent->FieldOfView = DefaultFOV;
 	this->TeleportTo(StartLocation, FRotator(0, 90, 0));
 }
 
