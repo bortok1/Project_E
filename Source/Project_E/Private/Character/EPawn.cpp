@@ -78,6 +78,17 @@ bool AEPawn::ResetTimer()
 	return false;
 }
 
+bool AEPawn::StopTimer()
+{
+	if (TimerWidgetRef) {
+		FOutputDeviceNull er;
+		const TCHAR* command = TEXT("Stop");
+		TimerWidgetRef->CallFunctionByNameWithArguments(command, er, nullptr, true);
+		return true;
+	}
+	return false;
+}
+
 
 
 void AEPawn::OnHit(FVector StartLocation)

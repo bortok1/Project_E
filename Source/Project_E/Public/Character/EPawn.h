@@ -35,6 +35,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 		bool ResetTimer();
 
+	bool StopTimer();
+
 
 	UPROPERTY(EditAnywhere)
 		class UStaticMeshComponent* CharacterMesh;

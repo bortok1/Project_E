@@ -34,7 +34,7 @@ class PROJECT_E_API AEPlayerController : public APlayerController
 	FVector Acceleration;
 	FVector Rotation;
 	
-	FTimerHandle UnusedHandle;
+	FTimerHandle GrowTimeHandle;
 
 	int8 GrowTimer;
 	

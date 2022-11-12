@@ -55,7 +55,6 @@ void AEPlayerController::BeginPlayingState()
 
 void AEPlayerController::MoveTick(float DeltaTime)
 {
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, Velocity.ToString());
 	if(EPawn)
 	{
 		if(bInputPressed)
@@ -83,28 +82,14 @@ void AEPlayerController::MoveTick(float DeltaTime)
 			else
 			{
 				Velocity *= EPawn->GetFriction();
-				GetWorldTimerManager().ClearTimer(UnusedHandle);
+				GetWorldTimerManager().ClearTimer(GrowTimeHandle);
 			}
 		}
-		else if(Velocity.Length() <= 0.01f) {
+		else if(bFirstInput && Velocity.Length() < 10.f / EPawn->GetMass()) {
 			if (bFirstInput) {
 				GetWorld()->GetTimerManager().SetTimer(
-					UnusedHandle, this, &AEPlayerController::Grow, EPawn->GetGrowSpeed(), true, EPawn->GetGrowSpeed());
+					GrowTimeHandle, this, &AEPlayerController::Grow, EPawn->GetGrowSpeed(), true, EPawn->GetGrowSpeed());
 			}
-			Velocity = FVector::Zero();
-		}
-		if(bFirstInput && Velocity.Length() < 10.f / EPawn->GetMass())
-		{
-			GrowTimer++;
-
-			if(GrowTimer > 90)
-			{
-				Grow();
-			}
-		}
-		else
-		{
-			GrowTimer = 0;
 		}
 
 		MoveCamera();
@@ -119,8 +104,9 @@ void AEPlayerController::Die()
 	bInputPressed = false; 
 	bFirstInput = false;
 	bResetTimer = true;
+	EPawn->StopTimer();
 	EPawn->OnHit(GetSpawnLocation());
-	GetWorldTimerManager().ClearTimer(UnusedHandle);
+	GetWorldTimerManager().ClearTimer(GrowTimeHandle);
 }
 
 void AEPlayerController::Grow()
