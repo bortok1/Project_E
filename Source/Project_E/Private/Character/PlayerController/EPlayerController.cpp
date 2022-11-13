@@ -91,7 +91,20 @@ void AEPlayerController::MoveTick(float DeltaTime)
 					GrowTimeHandle, this, &AEPlayerController::Grow, EPawn->GetGrowSpeed(), true, EPawn->GetGrowSpeed());
 			}
 		}
+		if(bFirstInput && Velocity.Length() < 10.f / EPawn->GetMass())
+		{
+			GrowTimer++;
 
+			if(GrowTimer > 90)
+			{
+				Grow();
+			}
+		}
+		else
+		{
+			GrowTimer = 0;
+		}
+		
 		MoveCamera();
 	}
 }
@@ -118,7 +131,7 @@ void AEPlayerController::Win()
 void AEPlayerController::Grow()
 {
 	GrowTimer = 0;
-	if (EPawn->GrowBox() && !EPawn->TeleportTo(EPawn->GetActorLocation() + Velocity + FVector(0.001f, 0.f,0.f), Rotation.Rotation(), true))
+	if (!EPawn->GrowBox() || !EPawn->TeleportTo(EPawn->GetActorLocation() + Velocity + FVector(0.001f, 0.f,0.f), Rotation.Rotation(), true))
 		Die();
 }
 
