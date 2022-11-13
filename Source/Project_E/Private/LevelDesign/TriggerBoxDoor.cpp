@@ -17,11 +17,11 @@ void ATriggerBoxDoor::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 	if (AEPawn* Pawn = Cast<AEPawn>(OtherActor)) {
 		for (AActor* Door : LinkedDoors) {
 			if (Door) {
-				FVector CurrentLocation = Door->GetActorLocation();
-				if (CurrentLocation == StartLocation[i]) {
-					CurrentLocation.Z -= 200.0f;
-				}
-				Door->SetActorLocation(CurrentLocation);
+				// Hides visible components
+				Door->SetActorHiddenInGame(true);
+
+				// Disables collision components
+				Door->SetActorEnableCollision(false);
 			}
 			i++;
 		}
@@ -33,10 +33,10 @@ void ATriggerBoxDoor::OnComponentEndOverlap(UPrimitiveComponent* OverlappedCompo
 	if (AEPawn* Pawn = Cast<AEPawn>(OtherActor)) {
 		FVector Scale = Pawn->GetActorRelativeScale3D();
 		float ScaleX = Scale[0];
-		float duration = 1.0f;
-		if (ScaleX == 1) { duration = 2.0f; }
-		else if (ScaleX == 2) { duration = 4.0f; }
-		else if (ScaleX == 3) { duration = 6.0f; }
+		float duration;
+		if (ScaleX == 1) { duration = .5f; }
+		else if (ScaleX == 2) { duration = 2.0f; }
+		else if (ScaleX == 3) { duration = 4.0f; }
 		else { duration = 8.0f; }
 		GetWorldTimerManager().SetTimer(Timer, this, &ATriggerBoxDoor::CloseDoors, duration, false);
 
@@ -47,20 +47,12 @@ void ATriggerBoxDoor::CloseDoors()
 {
 	for (AActor* Door : LinkedDoors) {
 		if (Door) {
-			FVector CurrentLocation = Door->GetActorLocation();
-			CurrentLocation.Z += 200.0f;
-			Door->SetActorLocation(CurrentLocation);
+			// Hides visible components
+			Door->SetActorHiddenInGame(false);
+
+			// Disables collision components
+			Door->SetActorEnableCollision(true);
 		}
 	}
 }
 
-void ATriggerBoxDoor::BeginPlay()
-{
-	Super::BeginPlay();
-	for (AActor* Door : LinkedDoors) {
-		if (Door) {
-			FVector StartingLocation = Door->GetActorLocation();
-			StartLocation.Add(StartingLocation);
-		}
-	}
-}

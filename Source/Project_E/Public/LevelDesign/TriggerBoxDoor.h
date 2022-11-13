@@ -23,15 +23,8 @@ private:
 	UFUNCTION()
 	void CloseDoors();
 
-	void BeginPlay();
-
 	UPROPERTY(EditAnywhere)
 	TArray<AActor*> LinkedDoors;
 
-	UPROPERTY()
 	FTimerHandle Timer;
-
-	UPROPERTY()
-	TArray<FVector> StartLocation;
-
 };
