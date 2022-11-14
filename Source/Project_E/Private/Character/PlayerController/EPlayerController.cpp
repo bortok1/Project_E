@@ -173,7 +173,7 @@ void AEPlayerController::MoveCamera()
 	FVector Normalized = (CursorLocation - EPawnLocation).GetSafeNormal();
 	float Distance = FVector::Distance(EPawnLocation, CursorLocation);
 	float BoomZ = EPawn->CameraBoom->GetComponentToWorld().GetLocation().Z;
-	FVector NewCameraLocation = Normalized * FMath::Clamp(Distance * 0.5f, 0.0, EPawn->GetCameraMaxOffset()) + EPawnLocation;
+	FVector NewCameraLocation = Normalized * FMath::Log2(Distance/EPawn->GetCameraMovementDivider() + 1) * EPawn->GetCameraMovementMultiplier() + EPawnLocation;
 	NewCameraLocation.Z = BoomZ;
 	EPawn->CameraBoom->SetWorldLocation(NewCameraLocation);
 }

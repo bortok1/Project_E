@@ -79,9 +79,11 @@ private:
 	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
 		float FOVStep = 10.f;
 
-	/** Max distance between player and camera in 2D */
-	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "100.0", ClampMax = "400.0", UIMin = "100.0", UIMax = "400.0"))
-		float CameraMaxOffset = 200.f;
+	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "300.0", UIMin = "000.0", UIMax = "300.0"))
+		float CameraMovementDivider = 150.f;
+
+	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "300.0", UIMin = "0.0", UIMax = "300.0"))
+		float CameraMovementMultiplier = 50.f;
 
 	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
 		float DefaultMass = 1.f;
@@ -111,5 +113,6 @@ public:
 	[[nodiscard]] float GetFriction() const { return Friction; }
 	[[nodiscard]] float GetGrowStep() const { return GrowStep; }
 	[[nodiscard]] float GetGrowSpeed() const { return GrowSpeed; }
-	[[nodiscard]] float GetCameraMaxOffset() const { return CameraMaxOffset; }
+	[[nodiscard]] float GetCameraMovementDivider() const { return CameraMovementDivider; }
+	[[nodiscard]] float GetCameraMovementMultiplier() const { return CameraMovementMultiplier; }
 };
