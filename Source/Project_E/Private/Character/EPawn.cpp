@@ -3,7 +3,6 @@
 
 #include "Character/EPawn.h"
 #include "Character/PlayerController/EPlayerController.h"
-#include "PickUp.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
@@ -19,8 +18,6 @@ AEPawn::AEPawn()
 	CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>("CharacterMesh");
 	SetRootComponent(CharacterMesh);
 
-	CharacterMesh->OnComponentBeginOverlap.AddDynamic(this, &AEPawn::OnOverlap);
-	
 	// Create a camera boom...
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -102,19 +99,9 @@ bool AEPawn::WriteScoreTimer()
 
 void AEPawn::OnHit(FVector StartLocation)
 {
-	
 	CharacterMesh->SetRelativeScale3D(FVector(ActorMinSize, ActorMinSize, 1));
 	Mass = DefaultMass;
 	TopDownCameraComponent->FieldOfView = DefaultFOV;
-	//
+	OnDeath.Broadcast();
 	this->TeleportTo(StartLocation, FRotator(0, 90, 0));
 }
-
-void AEPawn::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	//TODO: Nie dziala, trzeba zrobic zamiast blueprintu
-	//APickUp* pickUp = Cast<APickUp>(OtherActor);
-	//if (pickUp)
-	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "Hit");
-}
-

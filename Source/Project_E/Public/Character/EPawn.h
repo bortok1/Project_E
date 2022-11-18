@@ -7,20 +7,22 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EPawn.generated.h"
 
-UCLASS()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
+
+
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class PROJECT_E_API AEPawn : public APawn
 {
 	GENERATED_BODY()
 public:
 	AEPawn();
 
+	/** Brodcasting delegate on death */
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+		FOnDeath OnDeath;
+
 	UFUNCTION()
 		void OnHit(FVector StartLocation);
-
-
-	UFUNCTION()
-		void OnOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
-			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 
