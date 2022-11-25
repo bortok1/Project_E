@@ -3,36 +3,52 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EPawn.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
+class AEPlayerController;
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS()
 class PROJECT_E_API AEPawn : public APawn
 {
 	GENERATED_BODY()
 public:
-	AEPawn();
-
 	/** Brodcasting delegate on death */
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-		FOnDeath OnDeath;
+	FOnDeath OnDeath;
+	
+	AEPawn();
+	virtual void BeginPlay() override;
 
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	
+	void Move(const struct FInputActionValue& ActionValue);
+
+	/** usefloating pawn movement to smooth out motion */
+	UPROPERTY(EditAnywhere)
+	class UFloatingPawnMovement* Movement;
+
+	UPROPERTY(EditAnywhere)
+	float MoveScale;
+
+public:
 	UFUNCTION()
-		void OnHit(FVector StartLocation);
-
+	void NotifyHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+		FVector NormalImpulse, const FHitResult& Hit);
+	
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
 	UFUNCTION()
-		bool GrowBox();
+		void GrowBox();
 
 	UFUNCTION(BlueprintCallable)
-		bool ShrinkBox();
+		void ShrinkBox();
 
 	UFUNCTION(BlueprintCallable)
 		bool ResetTimer();
@@ -51,9 +67,6 @@ public:
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UUserWidget> TimerWidget;
 
 	UPROPERTY(BlueprintReadOnly)
 	UUserWidget* TimerWidgetRef;
@@ -101,9 +114,13 @@ private:
 
 	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, ClampMax = 1, UIMin = 0.0001, UIMax = 1))
 		float Friction = 0.95f;
-
 	
+	FVector Velocity;
+	FVector2D Acceleration;
 
+	UPROPERTY()
+	AEPlayerController* EPlayerController;
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UBoxComponent* BoxCollider = nullptr;
@@ -118,3 +135,4 @@ public:
 	[[nodiscard]] float GetCameraMovementDivider() const { return CameraMovementDivider; }
 	[[nodiscard]] float GetCameraMovementMultiplier() const { return CameraMovementMultiplier; }
 };
+

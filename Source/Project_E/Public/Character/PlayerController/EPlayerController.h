@@ -6,6 +6,9 @@
 #include "GameFramework/PlayerController.h"
 #include "EPlayerController.generated.h"
 
+class UInputAction;
+class UInputMappingContext;
+
 class AEPawn;
 /**
  * 
@@ -16,29 +19,24 @@ class PROJECT_E_API AEPlayerController : public APlayerController
 	GENERATED_BODY()
 
 	AEPlayerController();
+
+	/** Setup input actions and context mappings for player */
 	virtual void SetupInputComponent() override;
+
+public:
+	/** Mapping context used for pawn contol. */
+	UPROPERTY()
+	class UInputMappingContext* PawnMappingContext;
+	
+	UPROPERTY()
+	class UInputAction* MoveAction;
+
+private:
 	virtual void BeginPlayingState() override;
-	void MoveTick(float DeltaTime);
-	void Die();
 	UFUNCTION(BlueprintCallable)
 	void Win();
-	void Grow();
-	void Shrink();
-	void OnSetDestinationPressed();
-	void OnSetDestinationReleased();
+	
 	void MoveCamera();
-	
-	bool bInputPressed;
-	bool bFirstInput;
-	bool bResetTimer;
-
-	FVector Velocity;
-	FVector Acceleration;
-	FVector Rotation;
-	
-	FTimerHandle GrowTimeHandle;
-
-	int8 GrowTimer;
 	
 	UPROPERTY()
 	AEPawn* EPawn;
