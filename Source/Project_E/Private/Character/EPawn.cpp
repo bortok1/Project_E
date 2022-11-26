@@ -10,9 +10,12 @@
 #include <Misc/OutputDeviceNull.h>
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Character/Components/ECameraComponent.h"
+#include "Character/Components/EFloatingPawnMovement.h"
+#include "Character/Components/SizeManagerComponent.h"
+#include "Components/BoxComponent.h"
 #include "GenericPlatform/GenericPlatformCrashContext.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameFramework/FloatingPawnMovement.h"
 
 
 // Sets default values
@@ -20,42 +23,57 @@ AEPawn::AEPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	
+	// Create Mesh
 	CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>("CharacterMesh");
 	SetRootComponent(CharacterMesh);
 
-	CharacterMesh->OnComponentHit.AddDynamic(this, &AEPawn::NotifyHit);
+	CharacterMesh->OnComponentHit.AddDynamic(this, &AEPawn::OnActorHit);
+	CharacterMesh->OnComponentBeginOverlap.AddDynamic(this, &AEPawn::BeginEarthOverlap);
+	CharacterMesh->OnComponentEndOverlap.AddDynamic(this, &AEPawn::EndEarthOverlap);
+
 	
-	// Create a camera boom...
+	// Create a camera boom
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when character does
 	CameraBoom->TargetArmLength = 1000.f;
 	CameraBoom->SetRelativeRotation(FRotator(-90.f, -90.f, 0.f));
-	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
+	CameraBoom->bDoCollisionTest = true; // Want to pull camera in when it collides with level
 
-	// Create a camera...
-	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
-	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	// Create a camera
+	Camera = CreateDefaultSubobject<UECameraComponent>(TEXT("Camera"));
+	Camera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	Camera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	
+	EPlayerController = Cast<AEPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	MovementComponent = CreateDefaultSubobject<UEFloatingPawnMovement>("MovementComponent");
+	SizeComponent = CreateDefaultSubobject<USizeManagerComponent>("SizeComponent");
+	
 	TSubclassOf<UUserWidget> TimerWidgetClass;
 	ConstructorHelpers::FClassFinder<UUserWidget> BP_TimerWidgetClass(TEXT("/Game/Characters/BP_TimerWidget"));
 	
 	if (BP_TimerWidgetClass.Class) { 
 		TimerWidgetClass = BP_TimerWidgetClass.Class;
 	}
+	
 	TimerWidgetRef = CreateWidget<UUserWidget>(GetWorld(), TimerWidgetClass);
 
-	Movement = CreateDefaultSubobject<UFloatingPawnMovement>("Movement");
-	
-	MoveScale = 1.f;
 }
 
 void AEPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	EPlayerController = Cast<AEPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	bStopMeNow = false;
+}
+
+void AEPawn::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	Camera->MoveCamera(GetMousePosition());
 }
 
 void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -67,7 +85,7 @@ void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	check(EIC && EPC);
 	EIC->BindAction(EPC->MoveAction, ETriggerEvent::Triggered, this, &AEPawn::Move);
 
-	ULocalPlayer* LocalPlayer = EPC->GetLocalPlayer();
+	const ULocalPlayer* LocalPlayer = EPC->GetLocalPlayer();
 	check(LocalPlayer);
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 	check(Subsystem);
@@ -75,60 +93,42 @@ void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Subsystem->AddMappingContext(EPC->PawnMappingContext, 0);
 }
 
-void AEPawn::Move(const struct FInputActionValue& ActionValue)
+void AEPawn::Die()
 {
-	// Take half of screen resolution
-	FVector2D HalfResolution = FVector2D::Zero();
-	if ( GEngine && GEngine->GameViewport )
-	{
-		GEngine->GameViewport->GetViewportSize(HalfResolution);
-		HalfResolution *= 0.5f;
-	}
+	SizeComponent->SetDefaultSize();
+	Camera->SetDefaultFieldOfView();
 
-	// Location of mouse cursor on 2D screen
-	FVector2D CursorLocation; EPlayerController->GetMousePosition(CursorLocation.X, CursorLocation.Y);
+	bStopMeNow = true;
+	SetActorLocation(FVector(1660, 540, 193), false, nullptr, ETeleportType::ResetPhysics);
 
-	// Direction from screen center (player) to mouse cursor
-	 const FVector WorldDirectionVector3d = FVector((CursorLocation - HalfResolution).GetSafeNormal(), 0);
-	 const FRotator Rotation = (GetActorRotation() * (AngularDumping - 1) + WorldDirectionVector3d.Rotation()) * (1/AngularDumping);
 	
-	// TODO: Player can't make full revolution
-	// if (abs(Rotation.Yaw) - abs(GetActorRotation().Yaw) > 90)
-	{
-		
-	}
-	
-	AddMovementInput(WorldDirectionVector3d, MoveScale);
-	SetActorRotation(Rotation);
+	OnDeath.Broadcast();
 }
 
-void AEPawn::NotifyHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+void AEPawn::OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
+	UPrimitiveComponent* PrimitiveComponent1, FVector Vector, const FHitResult& HitResult)
 {
-	// CharacterMesh->SetRelativeScale3D(FVector(ActorMinSize, ActorMinSize, 1));
-	// Mass = DefaultMass;
-	// TopDownCameraComponent->FieldOfView = DefaultFOV;
-	// OnDeath.Broadcast();
-	// this->TeleportTo(StartLocation, FRotator(0, 90, 0));
-}
-
-void AEPawn::GrowBox()
-{
-	if (CharacterMesh->GetRelativeScale3D().X < ActorMaxSize && CharacterMesh->GetRelativeScale3D().Y < ActorMaxSize)
+	if(Actor->GetActorLocation().Z + 100.f > GetActorLocation().Z)
 	{
-		CharacterMesh->SetRelativeScale3D(CharacterMesh->GetRelativeScale3D() + FVector(GrowStep, GrowStep, 0));
-		Mass += GrowStep;
-		TopDownCameraComponent->FieldOfView += FOVStep;
+		Die();
 	}
 }
 
-void AEPawn::ShrinkBox()
+void AEPawn::BeginEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
+                               UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
 {
-	if (CharacterMesh->GetRelativeScale3D().X > ActorMinSize && CharacterMesh->GetRelativeScale3D().Y > ActorMinSize)
+	if(Actor->GetActorLocation().Z + 100.f > GetActorLocation().Z)
 	{
-		CharacterMesh->SetRelativeScale3D(CharacterMesh->GetRelativeScale3D() - FVector(GrowStep, GrowStep, 0));
-		Mass -= GrowStep;
-		TopDownCameraComponent->FieldOfView -= FOVStep;
+		CharacterMesh->SetSimulatePhysics(false);
+	}
+}
+
+void AEPawn::EndEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
+	UPrimitiveComponent* PrimitiveComponent1, int I)
+{
+	if(Actor->GetActorLocation().Z + 100.f > GetActorLocation().Z)
+	{
+		CharacterMesh->SetSimulatePhysics(true);
 	}
 }
 
@@ -164,3 +164,18 @@ bool AEPawn::WriteScoreTimer()
 	}
 	return false;
 }
+
+void AEPawn::Move(const struct FInputActionValue& ActionValue)
+{
+	const FVector VectorToCursor = MovementComponent->GetVectorTowardsCursor(GetMousePosition());
+	AddMovementInput(VectorToCursor, 1.f);
+	CharacterMesh->SetRelativeRotation(VectorToCursor.Rotation());
+}
+
+FVector2D AEPawn::GetMousePosition() const
+{
+	FVector2D Mouse = FVector2d::Zero();
+	EPlayerController->GetMousePosition(Mouse.X, Mouse.Y);
+	return Mouse;
+}
+

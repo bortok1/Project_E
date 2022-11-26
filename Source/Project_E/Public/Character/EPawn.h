@@ -3,14 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EPawn.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
 class AEPlayerController;
+class UECameraComponent;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
 UCLASS()
 class PROJECT_E_API AEPawn : public APawn
@@ -20,119 +22,83 @@ public:
 	/** Brodcasting delegate on death */
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnDeath OnDeath;
-	
+
 	AEPawn();
+
+	// Components
+	UPROPERTY(EditAnywhere)
+	class UEFloatingPawnMovement* MovementComponent;
+
+	UPROPERTY(EditAnywhere)
+	class USizeManagerComponent* SizeComponent;
+
+	// Mesh == RootComponent
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* CharacterMesh;
+
+	// Top down camera
+	UPROPERTY(EditAnywhere)
+	class UECameraComponent* Camera;
+
+	// Camera boom positioning the camera above the character
+	UPROPERTY(EditAnywhere)
+	class USpringArmComponent* CameraBoom;
+
+
+
+	FVector2D GetMousePosition() const;
+
+	void Die();
+	
+private:
+	
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaSeconds) override;
+	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	
-	void Move(const struct FInputActionValue& ActionValue);
-
-	/** usefloating pawn movement to smooth out motion */
-	UPROPERTY(EditAnywhere)
-	class UFloatingPawnMovement* Movement;
-
-	UPROPERTY(EditAnywhere)
-	float MoveScale;
-
-public:
-	UFUNCTION()
-	void NotifyHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-		FVector NormalImpulse, const FHitResult& Hit);
+	void Move(const FInputActionValue& ActionValue);
 	
-	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
-
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	UFUNCTION()
+	void OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
+		UPrimitiveComponent* PrimitiveComponent1, FVector Vector, const FHitResult& HitResult);
 
 	UFUNCTION()
-		void GrowBox();
+	void BeginEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
+		UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult);
 
-	UFUNCTION(BlueprintCallable)
-		void ShrinkBox();
+	UFUNCTION()
+	void EndEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
+		UPrimitiveComponent* PrimitiveComponent1, int I);
 
+	
+	bool bStopMeNow;
+	
+	UPROPERTY()
+	AEPlayerController* EPlayerController;
+
+private:
 	UFUNCTION(BlueprintCallable)
-		bool ResetTimer();
+	bool ResetTimer();
 
 	bool StopTimer();
 
 	bool WriteScoreTimer();
 
-	UPROPERTY(EditAnywhere)
-		class UStaticMeshComponent* CharacterMesh;
-
-	/** Top down camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* TopDownCameraComponent;
-
-	/** Camera boom positioning the camera above the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class USpringArmComponent* CameraBoom;
-
+public:
 	UPROPERTY(BlueprintReadOnly)
 	UUserWidget* TimerWidgetRef;
 
-private:
-	/** If equal or lower cube can't get smaller*/
-	UPROPERTY(Category = "Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
-		float ActorMinSize = 1.f;
 
-	/** If equal or higer cube can't grow*/
-	UPROPERTY(Category = "Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
-		float ActorMaxSize = 4.f;
-
-	/** How much the cube grow every instance (added value) */
-	UPROPERTY(Category = "Growth", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "10.0", UIMin = "0.0", UIMax = "10.0"))
-		float GrowStep = 1.f;
-
-	UPROPERTY(Category = "Growth", EditAnywhere, meta = (ClampMin = 0.0001, ClampMax = 1, UIMin = 0.0001, UIMax = 1))
-		float GrowSpeed = 0.05f;
-
-	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "180.0", UIMin = "0.0", UIMax = "180.0"))
-		float DefaultFOV = 90.f;
-
-	/** How much Field Of View grow every instance) */
-	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
-		float FOVStep = 10.f;
-
-	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "300.0", UIMin = "000.0", UIMax = "300.0"))
-		float CameraMovementDivider = 150.f;
-
-	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "300.0", UIMin = "0.0", UIMax = "300.0"))
-		float CameraMovementMultiplier = 50.f;
-
-	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
-		float DefaultMass = 1.f;
-
-	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
-		float Mass = DefaultMass;
-
-	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
-		float AngularDumping = 20.f;
-
-	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, UIMin = 0.0001))
-		float Speed = .01f;
-
-	UPROPERTY(Category = "Movement", EditAnywhere, meta = (ClampMin = 0.0001, ClampMax = 1, UIMin = 0.0001, UIMax = 1))
-		float Friction = 0.95f;
-	
-	FVector Velocity;
-	FVector2D Acceleration;
-
-	UPROPERTY()
-	AEPlayerController* EPlayerController;
-	
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class UBoxComponent* BoxCollider = nullptr;
 
 public:
-	[[nodiscard]] float GetMass() const { return Mass; }
-	[[nodiscard]] float GetAngularDumping() const { return AngularDumping; }
-	[[nodiscard]] float GetSpeed() const { return Speed; }
-	[[nodiscard]] float GetFriction() const { return Friction; }
-	[[nodiscard]] float GetGrowStep() const { return GrowStep; }
-	[[nodiscard]] float GetGrowSpeed() const { return GrowSpeed; }
-	[[nodiscard]] float GetCameraMovementDivider() const { return CameraMovementDivider; }
-	[[nodiscard]] float GetCameraMovementMultiplier() const { return CameraMovementMultiplier; }
+	void SetStopMeNow(bool const bNewStopMeNow) { bStopMeNow = bNewStopMeNow; }
+	
+	UECameraComponent* GetTopDownCameraComponent() const { return Camera; }
+	USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	[[nodiscard]] bool GetStopMeNow() const { return bStopMeNow; }
 };
+
+
 

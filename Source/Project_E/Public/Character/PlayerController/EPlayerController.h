@@ -36,8 +36,6 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void Win();
 	
-	void MoveCamera();
-	
 	UPROPERTY()
 	AEPawn* EPawn;
 };
