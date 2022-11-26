@@ -117,19 +117,23 @@ void AEPawn::OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
 void AEPawn::BeginEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
                                UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
 {
-	if(Actor->GetActorLocation().Z + 100.f > GetActorLocation().Z)
-	{
-		CharacterMesh->SetSimulatePhysics(false);
-	}
+	for(FName Tag : Actor->Tags)
+		if(Tag == FName("Ground"))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("BeginOverlap")));
+			CharacterMesh->SetSimulatePhysics(false);
+		}
 }
 
 void AEPawn::EndEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
 	UPrimitiveComponent* PrimitiveComponent1, int I)
 {
-	if(Actor->GetActorLocation().Z + 100.f > GetActorLocation().Z)
-	{
-		CharacterMesh->SetSimulatePhysics(true);
-	}
+	for(FName Tag : Actor->Tags)
+		if(Tag == FName("Ground"))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("EndOverlap")));
+			CharacterMesh->SetSimulatePhysics(true);
+		}
 }
 
 bool AEPawn::ResetTimer()
