@@ -33,8 +33,6 @@ public:
 
 private:
 	virtual void BeginPlayingState() override;
-	UFUNCTION(BlueprintCallable)
-	void Win();
 	
 	UPROPERTY()
 	AEPawn* EPawn;

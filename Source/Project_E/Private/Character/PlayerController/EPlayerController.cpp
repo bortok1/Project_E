@@ -31,11 +31,6 @@ void AEPlayerController::BeginPlayingState()
 	EPawn = Cast<AEPawn>(GetPawn());
 }
 
-void AEPlayerController::Win()
-{
-	// EPawn->WriteScoreTimer();
-}
-
 
 
 

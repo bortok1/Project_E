@@ -57,7 +57,10 @@ private:
 	virtual void Tick(float DeltaSeconds) override;
 	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-	
+
+	UFUNCTION(BlueprintCallable)
+	void Win();
+
 	void Move(const FInputActionValue& ActionValue);
 	
 	UFUNCTION()

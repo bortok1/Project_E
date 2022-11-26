@@ -67,6 +67,7 @@ void AEPawn::BeginPlay()
 	Super::BeginPlay();
 
 	bStopMeNow = false;
+	ResetTimer();
 }
 
 void AEPawn::Tick(float DeltaSeconds)
@@ -93,6 +94,12 @@ void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Subsystem->AddMappingContext(EPC->PawnMappingContext, 0);
 }
 
+void AEPawn::Win()
+{
+	WriteScoreTimer();
+	Die();
+}
+
 void AEPawn::Die()
 {
 	SizeComponent->SetDefaultSize();
@@ -101,6 +108,8 @@ void AEPawn::Die()
 	bStopMeNow = true;
 	SetActorLocation(FVector(1660, 540, 193), false, nullptr, ETeleportType::ResetPhysics);
 
+	StopTimer();
+	ResetTimer();
 	
 	OnDeath.Broadcast();
 }

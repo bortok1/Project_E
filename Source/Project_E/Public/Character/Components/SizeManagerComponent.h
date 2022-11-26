@@ -24,9 +24,11 @@ class PROJECT_E_API USizeManagerComponent : public UActorComponent
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 	void GrowPawn();
-	void ShrinkPawn();
 public:
 	void SetDefaultSize();
+
+	UFUNCTION(BlueprintCallable)
+	void ShrinkPawn();
 
 private:
 	UPROPERTY()
