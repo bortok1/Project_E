@@ -65,4 +65,7 @@ private:
 	
 	UPROPERTY(Category = "Time", EditAnywhere, meta = (ClampMin = 0.0001, ClampMax = 1, UIMin = 0.0001, UIMax = 1))
 	float GrowSpeed = 1.f;
+
+public:
+	[[nodiscard]]float GetMass() const { return Mass; }
 };

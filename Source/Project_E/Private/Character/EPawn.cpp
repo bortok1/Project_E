@@ -181,7 +181,7 @@ bool AEPawn::WriteScoreTimer()
 void AEPawn::Move(const struct FInputActionValue& ActionValue)
 {
 	const FVector VectorToCursor = MovementComponent->GetVectorTowardsCursor(GetMousePosition());
-	AddMovementInput(VectorToCursor, 1.f);
+	AddMovementInput(VectorToCursor, MovementComponent->MoveScale/SizeComponent->GetMass());
 	CharacterMesh->SetRelativeRotation(VectorToCursor.Rotation());
 }
 
