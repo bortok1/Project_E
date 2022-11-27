@@ -18,15 +18,7 @@ APickUpSpawner::APickUpSpawner()
 void APickUpSpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	if (UGameplayStatics::GetPlayerController(GetWorld(), 0) != nullptr) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "in not null");
-		//Ta linijka daje b³¹d
-		//player = Cast<AEPawn>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn());
-	}
-
-	if (player != nullptr) {
-		player->OnDeath.AddUniqueDynamic(this, &APickUpSpawner::SpawnPickUp);
-	}
+	SpawnPickUp();
 }
 
 // Called every frame

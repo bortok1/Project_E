@@ -16,8 +16,16 @@ public:
 	APickUp();
 
 protected:
+
+	UPROPERTY()
+	class UEHealthComponent* HealthComponent;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
+
+	UFUNCTION()
+	void DestroyPU();
 
 public:	
 	// Called every frame

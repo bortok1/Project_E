@@ -12,16 +12,15 @@
 
 class AEPlayerController;
 class UECameraComponent;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
 UCLASS()
 class PROJECT_E_API AEPawn : public APawn
 {
 	GENERATED_BODY()
 public:
-	/** Brodcasting delegate on death */
-	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-	FOnDeath OnDeath;
+
+	UPROPERTY()
+	class UEHealthComponent* HealthComponent;
 
 	AEPawn();
 
@@ -44,8 +43,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	class USpringArmComponent* CameraBoom;
 
-
-
 	FVector2D GetMousePosition() const;
 
 	void Die();
@@ -57,6 +54,7 @@ private:
 	virtual void Tick(float DeltaSeconds) override;
 	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void PostInitializeComponents() override;
 
 	UFUNCTION(BlueprintCallable)
 	void Win();
@@ -75,7 +73,6 @@ private:
 	void EndEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
 		UPrimitiveComponent* PrimitiveComponent1, int I);
 
-	
 	bool bStopMeNow;
 	
 	UPROPERTY()
@@ -92,8 +89,6 @@ private:
 public:
 	UPROPERTY(BlueprintReadOnly)
 	UUserWidget* TimerWidgetRef;
-
-
 
 public:
 	void SetStopMeNow(bool const bNewStopMeNow) { bStopMeNow = bNewStopMeNow; }

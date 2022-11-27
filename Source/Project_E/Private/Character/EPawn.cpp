@@ -13,6 +13,7 @@
 #include "Character/Components/ECameraComponent.h"
 #include "Character/Components/EFloatingPawnMovement.h"
 #include "Character/Components/SizeManagerComponent.h"
+#include "Character/Components/EHealthComponent.h"
 #include "Components/BoxComponent.h"
 #include "GenericPlatform/GenericPlatformCrashContext.h"
 #include "Kismet/GameplayStatics.h"
@@ -94,6 +95,12 @@ void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Subsystem->AddMappingContext(EPC->PawnMappingContext, 0);
 }
 
+void AEPawn::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	HealthComponent = this->FindComponentByClass<UEHealthComponent>();
+}
+
 void AEPawn::Win()
 {
 	WriteScoreTimer();
@@ -104,6 +111,9 @@ void AEPawn::Die()
 {
 	SizeComponent->SetDefaultSize();
 	Camera->SetDefaultFieldOfView();
+	if (HealthComponent != nullptr) {
+		HealthComponent->BrodcastDeath();
+	}
 
 	bStopMeNow = true;
 	SetActorLocation(FVector(1660, 540, 193), false, nullptr, ETeleportType::ResetPhysics);
@@ -111,7 +121,6 @@ void AEPawn::Die()
 	StopTimer();
 	ResetTimer();
 	
-	OnDeath.Broadcast();
 }
 
 void AEPawn::OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
@@ -129,7 +138,7 @@ void AEPawn::BeginEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* 
 	for(FName Tag : Actor->Tags)
 		if(Tag == FName("Ground"))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("BeginOverlap")));
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("BeginOverlap")));
 			CharacterMesh->SetSimulatePhysics(false);
 		}
 }
@@ -140,7 +149,7 @@ void AEPawn::EndEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Ac
 	for(FName Tag : Actor->Tags)
 		if(Tag == FName("Ground"))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("EndOverlap")));
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("EndOverlap")));
 			CharacterMesh->SetSimulatePhysics(true);
 		}
 }
