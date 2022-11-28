@@ -9,6 +9,7 @@
 UECameraComponent::UECameraComponent()
 {
 	Owner = Cast<AEPawn>(GetOwner());
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UECameraComponent::SetDefaultFieldOfView()
@@ -43,5 +44,28 @@ void UECameraComponent::MoveCamera(FVector2d CursorLocation)
 
 	const float BoomZ = Owner->CameraBoom->GetComponentToWorld().GetLocation().Z;
 	
-	this->SetRelativeLocation(FVector(BoomZ, NewCameraLocation.X, -NewCameraLocation.Y));
+	TargetPosition = FVector(BoomZ, NewCameraLocation.X, -NewCameraLocation.Y);
+}
+
+void UECameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	FVector location = GetRelativeLocation();
+	FVector vector = TargetPosition - location;
+	FVector2D vector2D;
+	vector2D.X = vector.Y;
+	vector2D.Y = -vector.Z;
+	float length = vector2D.Length();
+	length = FMath::Min(length, CameraMaxSpeedDistance);
+	length /= CameraMaxSpeedDistance;
+	float speed = CameraMaxSpeed * length;
+	if (vector2D.Length() > speed * DeltaTime)
+	{
+		vector2D.Normalize();
+		vector2D *= speed;
+		vector2D *= DeltaTime;
+		location.Y += vector2D.X;
+		location.Z -= vector2D.Y;
+		this->SetRelativeLocation(location);
+	}
 }

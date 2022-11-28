@@ -19,10 +19,12 @@ public:
 	void ZoomIn();
 	void ZoomOut();
 	void MoveCamera(FVector2d CursorLocation);
+	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 
 private:
 	UPROPERTY()
 	AEPawn* Owner;
+	FVector TargetPosition;
 
 public:
 	
@@ -37,5 +39,11 @@ public:
 
 	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "300.0", UIMin = "0.0", UIMax = "300.0"))
 	float CameraMovementMultiplier = 10.f;
-	
+
+	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "10.0", ClampMax = "300.0", UIMin = "10.0", UIMax = "300.0"))
+	float CameraMaxSpeed = 200.f;
+
+	//when distance between current camera location and target camera location is equal/greater than CameraMaxSpeedDistance, camera has max speed
+	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "5.0", ClampMax = "50.0", UIMin = "5.0", UIMax = "50.0"))
+	float CameraMaxSpeedDistance = 10.f;
 };
