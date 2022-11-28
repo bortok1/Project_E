@@ -116,6 +116,11 @@ void AEPawn::Die()
 	}
 
 	bStopMeNow = true;
+
+	FVector loc = GetActorLocation();
+	FRotator rot = GetActorRotation();
+	SpawnObject(loc, rot);
+
 	SetActorLocation(FVector(1660, 540, 193), false, nullptr, ETeleportType::ResetPhysics);
 
 	StopTimer();
@@ -201,3 +206,8 @@ FVector2D AEPawn::GetMousePosition() const
 	return Mouse;
 }
 
+void AEPawn::SpawnObject(FVector loc, FRotator rot) 
+{
+	FActorSpawnParameters SpawnParams;
+	AActor* SpawnedActorRef = GetWorld()->SpawnActor<AActor>(ActorToSpawn, loc, rot, SpawnParams);
+}

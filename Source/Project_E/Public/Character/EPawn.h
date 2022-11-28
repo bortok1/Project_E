@@ -46,6 +46,9 @@ public:
 	FVector2D GetMousePosition() const;
 
 	void Die();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+	TSubclassOf<AActor> ActorToSpawn;
 	
 private:
 	
@@ -77,6 +80,9 @@ private:
 	
 	UPROPERTY()
 	AEPlayerController* EPlayerController;
+
+	UFUNCTION()
+	void SpawnObject(FVector loc, FRotator rot);
 
 private:
 	UFUNCTION(BlueprintCallable)
