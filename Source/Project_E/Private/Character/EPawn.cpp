@@ -13,7 +13,6 @@
 #include "Character/Components/ECameraComponent.h"
 #include "Character/Components/EFloatingPawnMovement.h"
 #include "Character/Components/SizeManagerComponent.h"
-#include "Character/Components/EHealthComponent.h"
 #include "Components/BoxComponent.h"
 #include "GenericPlatform/GenericPlatformCrashContext.h"
 #include "Kismet/GameplayStatics.h"
@@ -24,7 +23,6 @@ AEPawn::AEPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	
 	// Create Mesh
 	CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>("CharacterMesh");
 	SetRootComponent(CharacterMesh);
@@ -95,12 +93,6 @@ void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Subsystem->AddMappingContext(EPC->PawnMappingContext, 0);
 }
 
-void AEPawn::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-	HealthComponent = this->FindComponentByClass<UEHealthComponent>();
-}
-
 void AEPawn::Win()
 {
 	WriteScoreTimer();
@@ -111,12 +103,8 @@ void AEPawn::Die()
 {
 	SizeComponent->SetDefaultSize();
 	Camera->SetDefaultFieldOfView();
-	if (HealthComponent != nullptr) {
-		HealthComponent->BrodcastDeath();
-	}
-
 	bStopMeNow = true;
-
+	OnDeath.Broadcast();
 	FVector loc = GetActorLocation();
 	FRotator rot = GetActorRotation();
 	SpawnObject(loc, rot);

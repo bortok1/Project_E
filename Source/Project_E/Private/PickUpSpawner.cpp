@@ -28,14 +28,16 @@ void APickUpSpawner::Tick(float DeltaTime)
 }
 
 
-void APickUpSpawner::SpawnPickUp()
+APickUp* APickUpSpawner::SpawnPickUp()
 {
+	APickUp* pickUp = nullptr;
 	FVector location = this->GetActorLocation();
 	FRotator rotation = this->GetActorRotation();
 	FTransform transform = FTransform(rotation, location, FVector(1, 1, 1));
 	if (pickUpToSpawn != nullptr) {
 		FActorSpawnParameters SpawnParams;
-		APickUp* pickUp = GetWorld()->SpawnActor<APickUp>(pickUpToSpawn, location, rotation, SpawnParams);
+		pickUp = GetWorld()->SpawnActor<APickUp>(pickUpToSpawn, location, rotation, SpawnParams);
 	}
+	return pickUp;
 }
 

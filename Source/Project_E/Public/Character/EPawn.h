@@ -13,14 +13,15 @@
 class AEPlayerController;
 class UECameraComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
+
 UCLASS()
 class PROJECT_E_API AEPawn : public APawn
 {
 	GENERATED_BODY()
 public:
-
 	UPROPERTY()
-	class UEHealthComponent* HealthComponent;
+	FOnDeath OnDeath;
 
 	AEPawn();
 
@@ -57,7 +58,6 @@ private:
 	virtual void Tick(float DeltaSeconds) override;
 	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-	virtual void PostInitializeComponents() override;
 
 	UFUNCTION(BlueprintCallable)
 	void Win();

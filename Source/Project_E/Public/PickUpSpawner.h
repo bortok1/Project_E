@@ -30,8 +30,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	APickUp* SpawnPickUp();
 private:
 	AEPawn* player;
-	void SpawnPickUp();
 
 };
