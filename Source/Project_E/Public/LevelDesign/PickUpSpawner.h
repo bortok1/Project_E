@@ -31,7 +31,5 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	APickUp* SpawnPickUp();
-private:
-	AEPawn* player;
 
 };

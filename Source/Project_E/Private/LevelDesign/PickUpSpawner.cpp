@@ -1,7 +1,6 @@
 // Copyright Bean Bin, All Rights Reserved.
 
-#include "PickUpSpawner.h"
-#include "PickUp.h"
+#include "LevelDesign/PickUpSpawner.h"
 #include <Kismet/GameplayStatics.h>
 #include "Engine/World.h"
 #include "Engine/Engine.h"

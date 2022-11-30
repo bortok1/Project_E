@@ -1,7 +1,7 @@
 // Copyright Bean Bin, All Rights Reserved.
 
 
-#include "PickUp.h"
+#include "LevelDesign/PickUp.h"
 
 // Sets default values
 APickUp::APickUp()

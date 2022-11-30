@@ -1,7 +1,7 @@
 // Copyright Bean Bin, All Rights Reserved.
 
+#include "LevelDesign/MyWorld.h"
 #include "EngineUtils.h"
-#include "MyWorld.h"
 
 // Sets default values
 AMyWorld::AMyWorld()
@@ -52,4 +52,5 @@ void AMyWorld::Clear()
 		if(xyz != nullptr)
 			pickUps.push_back(xyz);
 	}
+	
 }

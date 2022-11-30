@@ -31,7 +31,6 @@ AEPawn::AEPawn()
 	CharacterMesh->OnComponentBeginOverlap.AddDynamic(this, &AEPawn::BeginEarthOverlap);
 	CharacterMesh->OnComponentEndOverlap.AddDynamic(this, &AEPawn::EndEarthOverlap);
 
-	
 	// Create a camera boom
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
