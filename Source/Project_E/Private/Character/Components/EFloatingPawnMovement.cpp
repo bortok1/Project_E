@@ -8,7 +8,7 @@
 
 UEFloatingPawnMovement::UEFloatingPawnMovement()
 {
-	GravityForce = 0.01f;
+	GravityForce = 100.f;
 	MoveScale = 1.f;
 	AngularDumping = 20.f;
 }
