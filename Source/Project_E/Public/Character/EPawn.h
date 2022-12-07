@@ -68,14 +68,6 @@ private:
 	void OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
 		UPrimitiveComponent* PrimitiveComponent1, FVector Vector, const FHitResult& HitResult);
 
-	UFUNCTION()
-	void BeginEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
-		UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult);
-
-	UFUNCTION()
-	void EndEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
-		UPrimitiveComponent* PrimitiveComponent1, int I);
-
 	bool bStopMeNow;
 	
 	UPROPERTY()

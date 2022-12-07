@@ -15,6 +15,8 @@ class PROJECT_E_API UEFloatingPawnMovement : public UFloatingPawnMovement
 {
 	GENERATED_BODY()
 
+	UEFloatingPawnMovement();
+	
 	virtual void BeginPlay() override;
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -22,6 +24,11 @@ class PROJECT_E_API UEFloatingPawnMovement : public UFloatingPawnMovement
 	UPROPERTY()
 	AEPawn* Owner;
 
+	void Gravity(float DeltaTime);
+	
+	UPROPERTY(EditAnywhere, Category="Movement")
+	float GravityForce;
+	
 public:
 	static FVector GetVectorTowardsCursor(FVector2D CursorLocation);
 

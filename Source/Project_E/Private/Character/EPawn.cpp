@@ -28,8 +28,6 @@ AEPawn::AEPawn()
 	SetRootComponent(CharacterMesh);
 
 	CharacterMesh->OnComponentHit.AddDynamic(this, &AEPawn::OnActorHit);
-	CharacterMesh->OnComponentBeginOverlap.AddDynamic(this, &AEPawn::BeginEarthOverlap);
-	CharacterMesh->OnComponentEndOverlap.AddDynamic(this, &AEPawn::EndEarthOverlap);
 
 	// Create a camera boom
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -112,7 +110,8 @@ void AEPawn::Die()
 
 	StopTimer();
 	ResetTimer();
-	
+	CharacterMesh->SetSimulatePhysics(false);
+
 }
 
 void AEPawn::OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
@@ -122,28 +121,6 @@ void AEPawn::OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
 	{
 		Die();
 	}
-}
-
-void AEPawn::BeginEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
-                               UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
-{
-	for(FName Tag : Actor->Tags)
-		if(Tag == FName("Ground"))
-		{
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("BeginOverlap")));
-			CharacterMesh->SetSimulatePhysics(false);
-		}
-}
-
-void AEPawn::EndEarthOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
-	UPrimitiveComponent* PrimitiveComponent1, int I)
-{
-	for(FName Tag : Actor->Tags)
-		if(Tag == FName("Ground"))
-		{
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("EndOverlap")));
-			CharacterMesh->SetSimulatePhysics(true);
-		}
 }
 
 bool AEPawn::ResetTimer()

@@ -6,12 +6,16 @@
 #include "Character/EPawn.h"
 #include "Kismet/GameplayStatics.h"
 
+UEFloatingPawnMovement::UEFloatingPawnMovement()
+{
+	GravityForce = 0.01f;
+	MoveScale = 1.f;
+	AngularDumping = 20.f;
+}
+
 void UEFloatingPawnMovement::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	MoveScale = 1.f;
-	AngularDumping = 20.f;
 
 	Owner = Cast<AEPawn>(GetOwner());
 }
@@ -26,6 +30,15 @@ void UEFloatingPawnMovement::TickComponent(float DeltaTime, ELevelTick TickType,
 		Owner->SetStopMeNow(false);
 		this->StopMovementImmediately();
 	}
+
+	Gravity(DeltaTime);
+}
+
+void UEFloatingPawnMovement::Gravity(float DeltaTime)
+{
+	FVector TeleportLocation = Owner->GetActorLocation();
+	TeleportLocation.Z -= GravityForce * DeltaTime;
+	Owner->TeleportTo(TeleportLocation, Owner->GetActorRotation());
 }
 
 FVector UEFloatingPawnMovement::GetVectorTowardsCursor(FVector2D CursorLocation)
