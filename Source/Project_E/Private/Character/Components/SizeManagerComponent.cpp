@@ -59,6 +59,8 @@ void USizeManagerComponent::GrowPawn()
 		Camera->ZoomIn();
 		
 		GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
+
+		Owner->EGrowEvent();
 	}
 	else
 	{
@@ -75,6 +77,8 @@ void USizeManagerComponent::ShrinkPawn()
 		Camera->ZoomOut();
 
 		GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
+
+		Owner->EShrinkEvent();
 	}
 }
 

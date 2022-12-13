@@ -45,11 +45,19 @@ public:
 	class USpringArmComponent* CameraBoom;
 
 	FVector2D GetMousePosition() const;
-
+	
 	void Die();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 	TSubclassOf<AActor> ActorToSpawn;
+
+	// BlueprintEvents
+	UFUNCTION(BlueprintImplementableEvent)
+	void EDiedEvent();
+	UFUNCTION(BlueprintImplementableEvent)
+	void EGrowEvent();
+	UFUNCTION(BlueprintImplementableEvent)
+	void EShrinkEvent();
 	
 private:
 	
@@ -68,6 +76,9 @@ private:
 	void OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
 		UPrimitiveComponent* PrimitiveComponent1, FVector Vector, const FHitResult& HitResult);
 
+	// Where player Begins play
+	FVector StartPosition;
+	
 	bool bStopMeNow;
 	
 	UPROPERTY()

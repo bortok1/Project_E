@@ -10,6 +10,7 @@
 #include <Misc/OutputDeviceNull.h>
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "../../../../Plugins/Developer/RiderLink/Source/RD/thirdparty/clsocket/src/ActiveSocket.h"
 #include "Character/Components/ECameraComponent.h"
 #include "Character/Components/EFloatingPawnMovement.h"
 #include "Character/Components/SizeManagerComponent.h"
@@ -64,6 +65,8 @@ void AEPawn::BeginPlay()
 
 	bStopMeNow = false;
 	ResetTimer();
+
+	StartPosition = GetActorLocation();
 }
 
 void AEPawn::Tick(float DeltaSeconds)
@@ -106,12 +109,12 @@ void AEPawn::Die()
 	FRotator rot = GetActorRotation();
 	SpawnObject(loc, rot);
 
-	SetActorLocation(FVector(1660, 540, 193), false, nullptr, ETeleportType::ResetPhysics);
+	EDiedEvent();
+	
+	SetActorLocation(StartPosition);
 
 	StopTimer();
 	ResetTimer();
-	CharacterMesh->SetSimulatePhysics(false);
-
 }
 
 void AEPawn::OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
