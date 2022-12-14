@@ -2,15 +2,10 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include <vector>
-
-#include "PickUp.h"
 #include "PickUpSpawner.h"
-#include "Character/EPawn.h"
 #include "MyWorld.generated.h"
 
+class AEPawn;
 UCLASS()
 class PROJECT_E_API AMyWorld : public AActor
 {

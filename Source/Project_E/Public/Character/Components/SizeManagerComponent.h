@@ -2,10 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
 #include "SizeManagerComponent.generated.h"
-
 
 class AEPawn;
 class UECameraComponent;

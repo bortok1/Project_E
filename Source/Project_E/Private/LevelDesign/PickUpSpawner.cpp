@@ -1,9 +1,7 @@
 // Copyright Bean Bin, All Rights Reserved.
 
 #include "LevelDesign/PickUpSpawner.h"
-#include <Kismet/GameplayStatics.h>
-#include "Engine/World.h"
-#include "Engine/Engine.h"
+#include "LevelDesign/PickUp.h"
 
 // Sets default values
 APickUpSpawner::APickUpSpawner()

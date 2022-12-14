@@ -2,14 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "InputActionValue.h"
-#include "GameFramework/FloatingPawnMovement.h"
-#include "GameFramework/Pawn.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EPawn.generated.h"
 
 
+struct FInputActionValue;
 class AEPlayerController;
 class UECameraComponent;
 

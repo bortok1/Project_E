@@ -2,9 +2,8 @@
 
 
 #include "Character/Components/SizeManagerComponent.h"
-
-#include "Character/Components/ECameraComponent.h"
 #include "Character/EPawn.h"
+#include "Character/Components/ECameraComponent.h"
 #include "Character/Components/EFloatingPawnMovement.h"
 
 USizeManagerComponent::USizeManagerComponent()

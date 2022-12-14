@@ -2,13 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Engine/TriggerBox.h"
 #include "DeathTrigger.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PROJECT_E_API ADeathTrigger : public ATriggerBox
 {

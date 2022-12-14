@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
 #include "ECameraComponent.generated.h"
 
