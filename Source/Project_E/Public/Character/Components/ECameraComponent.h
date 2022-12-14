@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
+#include "Character/PlayerController/EPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "ECameraComponent.generated.h"
 
 class AEPawn;
@@ -25,6 +27,7 @@ private:
 	UPROPERTY()
 	AEPawn* Owner;
 	FVector TargetPosition;
+	AEPlayerController* EPlayerController;
 
 public:
 	

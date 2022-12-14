@@ -10,7 +10,7 @@
 #include <Misc/OutputDeviceNull.h>
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "../../../../Plugins/Developer/RiderLink/Source/RD/thirdparty/clsocket/src/ActiveSocket.h"
+//#include "../../../../Plugins/Developer/RiderLink/Source/RD/thirdparty/clsocket/src/ActiveSocket.h"
 #include "Character/Components/ECameraComponent.h"
 #include "Character/Components/EFloatingPawnMovement.h"
 #include "Character/Components/SizeManagerComponent.h"
@@ -69,12 +69,6 @@ void AEPawn::BeginPlay()
 	StartPosition = GetActorLocation();
 }
 
-void AEPawn::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	Camera->MoveCamera(GetMousePosition());
-}
 
 void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
