@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
 #include "Character/PlayerController/EPlayerController.h"
 #include "Kismet/GameplayStatics.h"

@@ -2,20 +2,14 @@
 
 
 #include "Character/EPawn.h"
-#include "Character/PlayerController/EPlayerController.h"
-#include "Blueprint/UserWidget.h"
-#include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-#include <Subsystems/PanelExtensionSubsystem.h>
 #include <Misc/OutputDeviceNull.h>
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-//#include "../../../../Plugins/Developer/RiderLink/Source/RD/thirdparty/clsocket/src/ActiveSocket.h"
+#include "Blueprint/UserWidget.h"
 #include "Character/Components/ECameraComponent.h"
 #include "Character/Components/EFloatingPawnMovement.h"
 #include "Character/Components/SizeManagerComponent.h"
-#include "Components/BoxComponent.h"
-#include "GenericPlatform/GenericPlatformCrashContext.h"
+#include "Character/PlayerController/EPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
 

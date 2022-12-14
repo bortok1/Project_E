@@ -2,6 +2,8 @@
 
 #include "LevelDesign/MyWorld.h"
 #include "EngineUtils.h"
+#include "Character/EPawn.h"
+#include "LevelDesign/PickUp.h"
 
 // Sets default values
 AMyWorld::AMyWorld()

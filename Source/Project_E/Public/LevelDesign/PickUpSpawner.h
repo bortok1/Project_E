@@ -2,11 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Character/EPawn.h"
-#include "PickUp.h"
 #include "PickUpSpawner.generated.h"
 
+class APickUp;
 class UPostInitializeComponent;
 
 UCLASS()

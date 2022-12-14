@@ -2,11 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/BoxComponent.h"
-#include "GameFramework/Actor.h"
 #include "SimpleTeleporter.generated.h"
 
+class UBoxComponent;
 UCLASS()
 class PROJECT_E_API ASimpleTeleporter : public AActor
 {

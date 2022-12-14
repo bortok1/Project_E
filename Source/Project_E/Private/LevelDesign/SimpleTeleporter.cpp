@@ -1,9 +1,8 @@
 // Copyright Bean Bin, All Rights Reserved.
 
 #include "LevelDesign/SimpleTeleporter.h"
-
 #include "Character/EPawn.h"
-#include "GameFramework/Character.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 ASimpleTeleporter::ASimpleTeleporter()

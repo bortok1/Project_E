@@ -2,8 +2,8 @@
 
 
 #include "LevelDesign/DeathTrigger.h"
-#include "Components/ShapeComponent.h"
 #include "Character/EPawn.h"
+#include "Components/ShapeComponent.h"
 
 ADeathTrigger::ADeathTrigger()
 {

@@ -2,8 +2,8 @@
 
 
 #include "LevelDesign/TriggerBoxDoor.h"
-#include "Components/ShapeComponent.h"
 #include "Character/EPawn.h"
+#include "Components/ShapeComponent.h"
 
 ATriggerBoxDoor::ATriggerBoxDoor()
 {

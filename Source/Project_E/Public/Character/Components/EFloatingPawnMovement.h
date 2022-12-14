@@ -2,14 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Character/PlayerController/EPlayerController.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "EFloatingPawnMovement.generated.h"
 
-/**
- * 
- */
+class AEPawn;
+
 UCLASS()
 class PROJECT_E_API UEFloatingPawnMovement : public UFloatingPawnMovement
 {
