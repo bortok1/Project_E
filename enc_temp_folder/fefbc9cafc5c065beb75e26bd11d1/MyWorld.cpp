@@ -39,6 +39,7 @@ void AMyWorld::Tick(float DeltaTime)
 
 void AMyWorld::Clear()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("CLEEAR")));
 	APickUp* xyz;
 	int nr = pickUps.size();
 	for(int i = 0; i < nr; i++)
