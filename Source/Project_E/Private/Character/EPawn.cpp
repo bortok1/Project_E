@@ -11,6 +11,7 @@
 #include "Character/Components/SizeManagerComponent.h"
 #include "Character/PlayerController/EPlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
 
 
 // Sets default values
@@ -149,6 +150,7 @@ bool AEPawn::WriteScoreTimer()
 
 void AEPawn::Move(const struct FInputActionValue& ActionValue)
 {
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NS_Particles, GetActorLocation(), GetActorRotation());
 	const FVector VectorToCursor = MovementComponent->GetVectorTowardsCursor(GetMousePosition());
 	AddMovementInput(VectorToCursor, MovementComponent->MoveScale/SizeComponent->GetMass());
 	CharacterMesh->SetRelativeRotation(VectorToCursor.Rotation());

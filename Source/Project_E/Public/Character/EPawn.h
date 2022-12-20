@@ -9,6 +9,7 @@
 struct FInputActionValue;
 class AEPlayerController;
 class UECameraComponent;
+class UNiagaraSystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
@@ -81,6 +82,9 @@ private:
 
 	UFUNCTION()
 	void SpawnObject(FVector loc, FRotator rot);
+
+	UPROPERTY(EditDefaultsOnly)
+	UNiagaraSystem* NS_Particles;
 
 private:
 	UFUNCTION(BlueprintCallable)
