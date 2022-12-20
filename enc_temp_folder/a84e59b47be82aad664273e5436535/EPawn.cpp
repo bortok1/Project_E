@@ -89,15 +89,18 @@ void AEPawn::Win()
 
 void AEPawn::Die()
 {
-	EDiedEvent();
-	OnDeath.Broadcast();
 	SizeComponent->SetDefaultSize();
 	Camera->SetDefaultFieldOfView();
 	bStopMeNow = true;
+	OnDeath.Broadcast();
 	FVector loc = GetActorLocation();
 	FRotator rot = GetActorRotation();
 	SpawnObject(loc, rot);
+
+	EDiedEvent();
+	
 	SetActorLocation(StartPosition);
+
 	StopTimer();
 	ResetTimer();
 }
