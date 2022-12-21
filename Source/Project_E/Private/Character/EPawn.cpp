@@ -52,18 +52,16 @@ AEPawn::AEPawn()
 	
 	TimerWidgetRef = CreateWidget<UUserWidget>(GetWorld(), TimerWidgetClass);
 
+	isAnimationPlaying = false;
 }
 
 void AEPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	bStopMeNow = false;
 	ResetTimer();
 
 	StartPosition = GetActorLocation();
-	didWin = false;
 }
-
 
 void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -84,41 +82,56 @@ void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEPawn::Win()
 {
+	if (isAnimationPlaying)
+		return;
+	
 	WriteScoreTimer();
-	didWin = true;
-	Die();
+	EWinEvent();
+	ResetLevel();
 }
 
 void AEPawn::Die()
 {
-	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("1"));
-	if(!didWin)
-		EDiedEvent();
-	didWin = false;
-	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("3"));
+	if (isAnimationPlaying)
+		return;
+	
 	OnDeath.Broadcast();
-	SizeComponent->SetDefaultSize();
-	Camera->SetDefaultFieldOfView();
+	EDiedEvent();
+	
+	// Spawn Death mark
+	SpawnObject(GetActorLocation(), GetActorRotation());
+
 	Camera->Shake();
-	bStopMeNow = true;
-	FVector loc = GetActorLocation();
-	FRotator rot = GetActorRotation();
-	SpawnObject(loc, rot);
-	StopTimer();
-	ResetTimer();
+	
+	ResetLevel();
+}
+
+void AEPawn::ResetLevel()
+{
+	isAnimationPlaying = true;
+	// Wait for animations
 	FTimerDelegate Delegate;
 	Delegate.BindLambda([&]()
 		{
 			SetActorLocation(StartPosition);
+			EAnimationsDoneEvent();
+
+			SizeComponent->SetDefaultSize();
+	
+			Camera->SetDefaultFieldOfView();
+				
+			// Score Timer
+			StopTimer();
+			ResetTimer();
+			isAnimationPlaying = false;
 		});
-	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("5"));
 
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 0.7f, false);
 }
 
 void AEPawn::OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
-	UPrimitiveComponent* PrimitiveComponent1, FVector Vector, const FHitResult& HitResult)
+                        UPrimitiveComponent* PrimitiveComponent1, FVector Vector, const FHitResult& HitResult)
 {
 	if(Actor->GetActorLocation().Z + 100.f > GetActorLocation().Z)
 	{
@@ -194,8 +207,7 @@ FVector2D AEPawn::GetMousePosition() const
 	return Mouse;
 }
 
-void AEPawn::SpawnObject(FVector loc, FRotator rot) 
+void AEPawn::SpawnObject(FVector loc, FRotator rot) const
 {
-	FActorSpawnParameters SpawnParams;
-	AActor* SpawnedActorRef = GetWorld()->SpawnActor<AActor>(ActorToSpawn, loc, rot, SpawnParams);
+	GetWorld()->SpawnActor<AActor>(ADeathMark, loc, rot);
 }

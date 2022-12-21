@@ -28,9 +28,13 @@ public:
 private:
 	UPROPERTY()
 	AEPawn* Owner;
-	FVector TargetPosition;
+
+	UPROPERTY()
 	AEPlayerController* EPlayerController;
-	TSubclassOf<UCameraShake> CameraShakeClass;
+	
+	FVector TargetPosition;
+	
+	TSubclassOf<UMatineeCameraShake> CameraShakeClass;
 
 public:
 	

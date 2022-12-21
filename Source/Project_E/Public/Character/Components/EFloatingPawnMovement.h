@@ -21,7 +21,10 @@ class PROJECT_E_API UEFloatingPawnMovement : public UFloatingPawnMovement
 	UPROPERTY()
 	AEPawn* Owner;
 
-	void Gravity(float DeltaTime);
+	UFUNCTION()
+	void StopImmediately();
+	
+	void Gravity(float DeltaTime) const;
 	
 	UPROPERTY(EditAnywhere, Category="Movement")
 	float GravityForce;

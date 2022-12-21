@@ -16,6 +16,7 @@ void UEFloatingPawnMovement::BeginPlay()
 	Super::BeginPlay();
 
 	Owner = Cast<AEPawn>(GetOwner());
+	Owner->OnDeath.AddUniqueDynamic(this, &UEFloatingPawnMovement::StopImmediately);
 }
 
 void UEFloatingPawnMovement::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -23,16 +24,15 @@ void UEFloatingPawnMovement::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if(Owner->GetStopMeNow())
-	{
-		Owner->SetStopMeNow(false);
-		this->StopMovementImmediately();
-	}
-
 	Gravity(DeltaTime);
 }
 
-void UEFloatingPawnMovement::Gravity(float DeltaTime)
+void UEFloatingPawnMovement::StopImmediately()
+{
+	this->StopMovementImmediately();
+}
+
+void UEFloatingPawnMovement::Gravity(float DeltaTime) const
 {
 	FVector TeleportLocation = Owner->GetActorLocation();
 	TeleportLocation.Z -= GravityForce * DeltaTime;

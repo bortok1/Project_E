@@ -45,11 +45,16 @@ public:
 	FVector2D GetMousePosition() const;
 	
 	void Die();
+	void ResetLevel();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
-	TSubclassOf<AActor> ActorToSpawn;
+	TSubclassOf<AActor> ADeathMark;
 
 	// BlueprintEvents
+	UFUNCTION(BlueprintImplementableEvent)
+	void EWinEvent();
+	UFUNCTION(BlueprintImplementableEvent)
+	void EAnimationsDoneEvent();
 	UFUNCTION(BlueprintImplementableEvent)
 	void EDiedEvent();
 	UFUNCTION(BlueprintImplementableEvent)
@@ -58,7 +63,6 @@ public:
 	void EShrinkEvent();
 	
 private:
-	bool didWin;
 	virtual void BeginPlay() override;
 	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
@@ -74,18 +78,17 @@ private:
 
 	// Where player Begins play
 	FVector StartPosition;
-	
-	bool bStopMeNow;
-	
+
 	UPROPERTY()
 	AEPlayerController* EPlayerController;
 
 	UFUNCTION()
-	void SpawnObject(FVector loc, FRotator rot);
+	void SpawnObject(FVector loc, FRotator rot) const;
 
 	UPROPERTY(EditDefaultsOnly)
 	UNiagaraSystem* NS_Particles;
 
+	bool isAnimationPlaying;
 private:
 	UFUNCTION(BlueprintCallable)
 	bool ResetTimer();
@@ -99,11 +102,8 @@ public:
 	UUserWidget* TimerWidgetRef;
 
 public:
-	void SetStopMeNow(bool const bNewStopMeNow) { bStopMeNow = bNewStopMeNow; }
-	
 	UECameraComponent* GetTopDownCameraComponent() const { return Camera; }
 	USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	[[nodiscard]] bool GetStopMeNow() const { return bStopMeNow; }
 };
 
 
