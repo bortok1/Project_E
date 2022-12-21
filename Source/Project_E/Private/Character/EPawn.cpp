@@ -162,13 +162,13 @@ void AEPawn::Move(const struct FInputActionValue& ActionValue)
 		ParticlePositionOffset = FVector(0, 0, 0);
 		break;
 	case 2:
-		ParticlePositionOffset = FVector(100, 100, 0);
+		ParticlePositionOffset = FVector(50, 50, 0);
 		break;
 	case 3:
-		ParticlePositionOffset = FVector(200, 200, 0);
+		ParticlePositionOffset = FVector(100, 100, 0);
 		break;
 	default:
-		ParticlePositionOffset = FVector(250, 250, 0);
+		ParticlePositionOffset = FVector(150, 150, 0);
 	}
 	
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NS_Particles,
