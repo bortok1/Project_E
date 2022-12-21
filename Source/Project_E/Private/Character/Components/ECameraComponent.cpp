@@ -10,6 +10,7 @@ UECameraComponent::UECameraComponent()
 	Owner = Cast<AEPawn>(GetOwner());
 	PrimaryComponentTick.bCanEverTick = true;
 	EPlayerController = Cast<AEPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	CameraShakeClass = UECameraShake::StaticClass();
 }
 
 void UECameraComponent::SetDefaultFieldOfView()
@@ -50,6 +51,7 @@ void UECameraComponent::MoveCamera(FVector2d CursorLocation)
 void UECameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
 	FVector2D Mouse = FVector2d::Zero();
 	EPlayerController->GetMousePosition(Mouse.X, Mouse.Y);
 	MoveCamera(Mouse);
@@ -72,4 +74,9 @@ void UECameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		location.Z -= vector2D.Y;
 		this->SetRelativeLocation(location);
 	}
+}
+
+void UECameraComponent::Shake()
+{
+	EPlayerController->PlayerCameraManager->StartCameraShake(CameraShakeClass, 1.0f);
 }

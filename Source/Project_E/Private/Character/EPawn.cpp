@@ -57,7 +57,6 @@ AEPawn::AEPawn()
 void AEPawn::BeginPlay()
 {
 	Super::BeginPlay();
-
 	bStopMeNow = false;
 	ResetTimer();
 
@@ -94,13 +93,20 @@ void AEPawn::Die()
 	OnDeath.Broadcast();
 	SizeComponent->SetDefaultSize();
 	Camera->SetDefaultFieldOfView();
+	Camera->Shake();
 	bStopMeNow = true;
 	FVector loc = GetActorLocation();
 	FRotator rot = GetActorRotation();
 	SpawnObject(loc, rot);
-	SetActorLocation(StartPosition);
 	StopTimer();
 	ResetTimer();
+	FTimerDelegate Delegate;
+	Delegate.BindLambda([&]()
+		{
+			SetActorLocation(StartPosition);
+		});
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 1.0f, false);
 }
 
 void AEPawn::OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,

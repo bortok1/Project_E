@@ -5,7 +5,9 @@
 #include "Camera/CameraComponent.h"
 #include "Character/PlayerController/EPlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "ECameraShake.h"
 #include "ECameraComponent.generated.h"
+
 
 class AEPawn;
 UCLASS()
@@ -21,12 +23,14 @@ public:
 	void ZoomOut();
 	void MoveCamera(FVector2d CursorLocation);
 	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
+	void Shake();
 
 private:
 	UPROPERTY()
 	AEPawn* Owner;
 	FVector TargetPosition;
 	AEPlayerController* EPlayerController;
+	TSubclassOf<UCameraShake> CameraShakeClass;
 
 public:
 	
