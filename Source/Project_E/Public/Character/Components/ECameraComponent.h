@@ -29,7 +29,6 @@ private:
 	UPROPERTY()
 	AEPawn* Owner;
 
-	UPROPERTY()
 	AEPlayerController* EPlayerController;
 	
 	FVector TargetPosition;
