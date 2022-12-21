@@ -61,6 +61,7 @@ void AEPawn::BeginPlay()
 	ResetTimer();
 
 	StartPosition = GetActorLocation();
+	didWin = false;
 }
 
 
@@ -84,12 +85,17 @@ void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AEPawn::Win()
 {
 	WriteScoreTimer();
+	didWin = true;
 	Die();
 }
 
 void AEPawn::Die()
 {
-	EDiedEvent();
+	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("1"));
+	if(!didWin)
+		EDiedEvent();
+	didWin = false;
+	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("3"));
 	OnDeath.Broadcast();
 	SizeComponent->SetDefaultSize();
 	Camera->SetDefaultFieldOfView();
@@ -105,8 +111,10 @@ void AEPawn::Die()
 		{
 			SetActorLocation(StartPosition);
 		});
+	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("5"));
+
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 1.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 0.7f, false);
 }
 
 void AEPawn::OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,

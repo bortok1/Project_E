@@ -58,7 +58,7 @@ public:
 	void EShrinkEvent();
 	
 private:
-	
+	bool didWin;
 	virtual void BeginPlay() override;
 	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
