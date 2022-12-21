@@ -54,7 +54,7 @@ void USizeManagerComponent::GrowPawn()
 			Owner->Die();
 		}
 		
-		Mass += GrowStep;
+		Mass += GrowStep / 3;
 		Camera->ZoomIn();
 		
 		GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
@@ -72,7 +72,7 @@ void USizeManagerComponent::ShrinkPawn()
 	if (Mesh->GetRelativeScale3D().X > ActorMinSize)
 	{
 		Mesh->SetRelativeScale3D(Mesh->GetRelativeScale3D() - FVector(GrowStep, GrowStep, 0));
-		Mass -= GrowStep;
+		Mass -= GrowStep / 3;
 		Camera->ZoomOut();
 
 		GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);

@@ -147,21 +147,27 @@ bool AEPawn::WriteScoreTimer()
 
 void AEPawn::Move(const struct FInputActionValue& ActionValue)
 {
-	FVector offset(0, 0, 0);
-	FRotator rotation(GetActorRotation().Pitch, GetActorRotation().Yaw, 0);
-	if (GetActorScale().X == 1) {
-		offset = FVector(0, 0, 0);
+	const FVector RootBackwardVector = -RootComponent->GetForwardVector();
+	const FRotator RootRotation = RootBackwardVector.Rotation();
+	FVector ParticlePositionOffset;
+
+	switch (static_cast<int>(GetActorScale().X)) {
+	case 1:
+		ParticlePositionOffset = FVector(0, 0, 0);
+		break;
+	case 2:
+		ParticlePositionOffset = FVector(100, 100, 0);
+		break;
+	case 3:
+		ParticlePositionOffset = FVector(200, 200, 0);
+		break;
+	default:
+		ParticlePositionOffset = FVector(250, 250, 0);
 	}
-	else if (GetActorScale().X == 2) {
-		offset = FVector(-100, -100, 0);
-	}
-	else if (GetActorScale().X == 3) {
-		offset = FVector(-200, -200, 0);
-	}
-	else if (GetActorScale().X == 4) {
-		offset = FVector(-250, -250, 0);
-	}
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NS_Particles, GetActorLocation() + (offset * GetActorRotation().Vector()), -1 * GetActorRotation());
+	
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NS_Particles,
+		GetActorLocation() + ParticlePositionOffset * RootBackwardVector, RootRotation, FVector(GetActorScale().X));
+	
 	const FVector VectorToCursor = MovementComponent->GetVectorTowardsCursor(GetMousePosition());
 	AddMovementInput(VectorToCursor, MovementComponent->MoveScale/SizeComponent->GetMass());
 	CharacterMesh->SetRelativeRotation(VectorToCursor.Rotation());
