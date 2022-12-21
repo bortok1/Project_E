@@ -147,7 +147,21 @@ bool AEPawn::WriteScoreTimer()
 
 void AEPawn::Move(const struct FInputActionValue& ActionValue)
 {
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NS_Particles, GetActorLocation(), GetActorRotation());
+	FVector offset(0, 0, 0);
+	FRotator rotation(GetActorRotation().Pitch, GetActorRotation().Yaw, 0);
+	if (GetActorScale().X == 1) {
+		offset = FVector(0, 0, 0);
+	}
+	else if (GetActorScale().X == 2) {
+		offset = FVector(-100, -100, 0);
+	}
+	else if (GetActorScale().X == 3) {
+		offset = FVector(-200, -200, 0);
+	}
+	else if (GetActorScale().X == 4) {
+		offset = FVector(-250, -250, 0);
+	}
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NS_Particles, GetActorLocation() + (offset * GetActorRotation().Vector()), -1 * GetActorRotation());
 	const FVector VectorToCursor = MovementComponent->GetVectorTowardsCursor(GetMousePosition());
 	AddMovementInput(VectorToCursor, MovementComponent->MoveScale/SizeComponent->GetMass());
 	CharacterMesh->SetRelativeRotation(VectorToCursor.Rotation());
