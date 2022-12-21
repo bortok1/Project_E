@@ -20,7 +20,7 @@ void APickUp::BeginPlay()
 
 void APickUp::DestroyPU()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Destroy");
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Destroy");
 }
 
 // Called every frame
