@@ -20,10 +20,12 @@ class PROJECT_E_API USizeManagerComponent : public UActorComponent
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
-	void GrowPawn();
 public:
 	void SetDefaultSize();
 
+	UFUNCTION(BlueprintCallable)
+	void GrowPawn();
+	
 	UFUNCTION(BlueprintCallable)
 	void ShrinkPawn();
 

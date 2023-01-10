@@ -49,15 +49,18 @@ void USizeManagerComponent::GrowPawn()
 	{
 		Mesh->SetRelativeScale3D(Mesh->GetRelativeScale3D() + FVector(GrowStep, GrowStep, 0));
 
-		if(!Owner->TeleportTo(Owner->GetActorLocation() * 1.00001, Owner->GetActorRotation(), true))
+		if(!Owner->TeleportTo(Owner->GetActorLocation() + 0.00001, Owner->GetActorRotation(), true))
 		{
 			Owner->Die();
 		}
 		
 		Mass += GrowStep / 3;
 		Camera->ZoomIn();
-		
-		GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
+
+		if(!GetWorld()->GetTimerManager().IsTimerPaused(GrowTimeHandle))
+		{
+			GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
+		}
 
 		Owner->EGrowEvent();
 	}
@@ -75,8 +78,11 @@ void USizeManagerComponent::ShrinkPawn()
 		Mass -= GrowStep / 3;
 		Camera->ZoomOut();
 
-		GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
-
+		if(!GetWorld()->GetTimerManager().IsTimerPaused(GrowTimeHandle))
+		{
+			GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
+		}
+		
 		Owner->EShrinkEvent();
 	}
 }

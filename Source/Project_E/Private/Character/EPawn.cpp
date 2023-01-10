@@ -99,7 +99,7 @@ void AEPawn::Die()
 	EDiedEvent();
 	
 	// Spawn Death mark
-	SpawnObject(GetActorLocation(), GetActorRotation());
+	SpawnDeathMark(GetActorLocation(), GetActorRotation());
 
 	Camera->Shake();
 	
@@ -207,7 +207,7 @@ FVector2D AEPawn::GetMousePosition() const
 	return Mouse;
 }
 
-void AEPawn::SpawnObject(FVector loc, FRotator rot) const
+void AEPawn::SpawnDeathMark(FVector loc, FRotator rot) const
 {
 	GetWorld()->SpawnActor<AActor>(ADeathMark, loc, rot);
 }

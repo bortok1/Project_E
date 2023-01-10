@@ -17,38 +17,17 @@ UCLASS()
 class PROJECT_E_API AEPawn : public APawn
 {
 	GENERATED_BODY()
+
+	virtual void BeginPlay() override;
+	
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	
 public:
+	AEPawn();
+	
+	// Delegate
 	UPROPERTY()
 	FOnDeath OnDeath;
-
-	AEPawn();
-
-	// Components
-	UPROPERTY(EditAnywhere)
-	class UEFloatingPawnMovement* MovementComponent;
-
-	UPROPERTY(EditAnywhere)
-	class USizeManagerComponent* SizeComponent;
-
-	// Mesh == RootComponent
-	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* CharacterMesh;
-
-	// Top down camera
-	UPROPERTY(EditAnywhere)
-	class UECameraComponent* Camera;
-
-	// Camera boom positioning the camera above the character
-	UPROPERTY(EditAnywhere)
-	class USpringArmComponent* CameraBoom;
-
-	FVector2D GetMousePosition() const;
-	
-	void Die();
-	void ResetLevel();
-
-	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
-	TSubclassOf<AActor> ADeathMark;
 
 	// BlueprintEvents
 	UFUNCTION(BlueprintImplementableEvent)
@@ -62,10 +41,49 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void EShrinkEvent();
 	
-private:
-	virtual void BeginPlay() override;
+	// Components
+	UPROPERTY(BlueprintReadOnly)
+	class USizeManagerComponent* SizeComponent;
+
+	UPROPERTY()
+	class UEFloatingPawnMovement* MovementComponent;
 	
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	// Mesh == RootComponent
+	UPROPERTY()
+	class UStaticMeshComponent* CharacterMesh;
+
+	// Top down camera
+	UPROPERTY()
+	class UECameraComponent* Camera;
+
+	// Camera boom positioning the camera above the character
+	UPROPERTY()
+	class USpringArmComponent* CameraBoom;
+
+	UPROPERTY()
+	AEPlayerController* EPlayerController;
+
+	FVector2D GetMousePosition() const;
+
+	void Die();
+	
+private:
+	// Actor spawned at place of death
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+	TSubclassOf<AActor> ADeathMark;
+
+	UFUNCTION()
+	void SpawnDeathMark(FVector loc, FRotator rot) const;
+
+	UPROPERTY(EditDefaultsOnly)
+	UNiagaraSystem* NS_Particles;
+
+	bool isAnimationPlaying;
+	
+	// Where player Begins play
+	FVector StartPosition;
+	
+	void ResetLevel();
 
 	UFUNCTION(BlueprintCallable)
 	void Win();
@@ -75,21 +93,7 @@ private:
 	UFUNCTION()
 	void OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
 		UPrimitiveComponent* PrimitiveComponent1, FVector Vector, const FHitResult& HitResult);
-
-	// Where player Begins play
-	FVector StartPosition;
-
-	UPROPERTY()
-	AEPlayerController* EPlayerController;
-
-	UFUNCTION()
-	void SpawnObject(FVector loc, FRotator rot) const;
-
-	UPROPERTY(EditDefaultsOnly)
-	UNiagaraSystem* NS_Particles;
-
-	bool isAnimationPlaying;
-private:
+	
 	UFUNCTION(BlueprintCallable)
 	bool ResetTimer();
 
@@ -100,11 +104,7 @@ private:
 public:
 	UPROPERTY(BlueprintReadOnly)
 	UUserWidget* TimerWidgetRef;
-
-public:
-	UECameraComponent* GetTopDownCameraComponent() const { return Camera; }
-	USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	
+	[[nodiscard]] UECameraComponent* GetTopDownCameraComponent() const { return Camera; }
+	[[nodiscard]] USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 };
-
-
-
