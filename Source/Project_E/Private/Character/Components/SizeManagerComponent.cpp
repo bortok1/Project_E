@@ -19,6 +19,7 @@ void USizeManagerComponent::BeginPlay()
 	Mesh = Owner->CharacterMesh;
 	Movement = Owner->MovementComponent;
 	Camera = Owner->Camera;
+	bFirstMove = false;
 
 	// Timer exists, but is not ticking
 	GetWorld()->GetTimerManager().SetTimer(
@@ -33,6 +34,10 @@ void USizeManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	// Pawn is moving
 	if(Movement->Velocity.Length() != 0)
 	{
+		if (!bFirstMove) {
+			Owner->ResetTimer();
+			bFirstMove = true;
+		}
 		GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
 	}
 	// Pawn is not moving && timer exists
@@ -96,5 +101,7 @@ void USizeManagerComponent::SetDefaultSize()
 	GetWorld()->GetTimerManager().SetTimer(
 		GrowTimeHandle, this, &USizeManagerComponent::GrowPawn, GrowSpeed, false, GrowSpeed);
 	GetWorld()->GetTimerManager().PauseTimer(GrowTimeHandle);
+	Owner->StopTimer();
+	bFirstMove = false;
 }
 

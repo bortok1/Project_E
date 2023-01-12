@@ -94,6 +94,9 @@ private:
 	void OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
 		UPrimitiveComponent* PrimitiveComponent1, FVector Vector, const FHitResult& HitResult);
 	
+
+
+public:	
 	UFUNCTION(BlueprintCallable)
 	bool ResetTimer();
 
@@ -101,7 +104,6 @@ private:
 
 	bool WriteScoreTimer();
 
-public:
 	UPROPERTY(BlueprintReadOnly)
 	UUserWidget* TimerWidgetRef;
 	

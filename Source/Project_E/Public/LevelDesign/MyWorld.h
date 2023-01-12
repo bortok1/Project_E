@@ -15,12 +15,14 @@ public:
 	// Sets default values for this actor's properties
 	AMyWorld();
 
+
 	AEPawn* player;
 	std::vector<APickUp*> pickUps;
 	std::vector<APickUpSpawner*> pickUpSpawners;
 	
 	UFUNCTION()
 	void Clear();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -28,5 +30,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY()
+	FString levelName;
 
 };

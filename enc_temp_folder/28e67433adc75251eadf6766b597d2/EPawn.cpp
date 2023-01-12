@@ -58,6 +58,7 @@ AEPawn::AEPawn()
 void AEPawn::BeginPlay()
 {
 	Super::BeginPlay();
+	ResetTimer();
 
 	StartPosition = GetActorLocation();
 }
@@ -81,11 +82,11 @@ void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEPawn::Win()
 {
-	//if (isAnimationPlaying)
-		//return;
+	if (isAnimationPlaying)
+		return;
 	
 	WriteScoreTimer();
-	//ResetLevel();
+	ResetLevel();
 	EWinEvent();
 }
 
@@ -113,7 +114,7 @@ void AEPawn::ResetLevel()
 	Delegate.BindLambda([&]()
 		{
 			SetActorLocation(StartPosition);
-			EAnimationsDoneEvent();
+			//EAnimationsDoneEvent();
 
 			SizeComponent->SetDefaultSize();
 	

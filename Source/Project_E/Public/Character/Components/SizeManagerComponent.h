@@ -30,6 +30,9 @@ public:
 	void ShrinkPawn();
 
 private:
+
+	bool bFirstMove;
+
 	UPROPERTY()
 	AEPawn* Owner;
 
