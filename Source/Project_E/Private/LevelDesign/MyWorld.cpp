@@ -17,6 +17,15 @@ AMyWorld::AMyWorld()
 void AMyWorld::BeginPlay()
 {
 	Super::BeginPlay();
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if (nullptr != Cast<AEPawn>(*ActorItr))
+			player = Cast<AEPawn>(*ActorItr);
+		else if (nullptr != Cast<APickUp>(*ActorItr))
+			pickUps.push_back(Cast<APickUp>(*ActorItr));
+		else if (nullptr != Cast<APickUpSpawner>(*ActorItr))
+			pickUpSpawners.push_back(Cast<APickUpSpawner>(*ActorItr));
+	}
     if(player != nullptr)
     	player->OnDeath.AddUniqueDynamic(this, &AMyWorld::Clear);
 }
@@ -50,11 +59,7 @@ void AMyWorld::ListPickUps()
 {
 	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
-		if (nullptr != Cast<AEPawn>(*ActorItr))
-			player = Cast<AEPawn>(*ActorItr);
-		else if (nullptr != Cast<APickUp>(*ActorItr))
+		if (nullptr != Cast<APickUp>(*ActorItr))
 			pickUps.push_back(Cast<APickUp>(*ActorItr));
-		else if (nullptr != Cast<APickUpSpawner>(*ActorItr))
-			pickUpSpawners.push_back(Cast<APickUpSpawner>(*ActorItr));
 	}
 }
