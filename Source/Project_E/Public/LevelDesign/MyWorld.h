@@ -15,13 +15,16 @@ public:
 	// Sets default values for this actor's properties
 	AMyWorld();
 
-
 	AEPawn* player;
 	std::vector<APickUp*> pickUps;
 	std::vector<APickUpSpawner*> pickUpSpawners;
 	
 	UFUNCTION()
 	void Clear();
+
+	UFUNCTION(BlueprintCallable)
+		void ListPickUps();
+
 
 protected:
 	// Called when the game starts or when spawned
