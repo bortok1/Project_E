@@ -4,6 +4,7 @@
 #include "EngineUtils.h"
 #include "Character/EPawn.h"
 #include "LevelDesign/PickUp.h"
+#include "Ice.h"
 
 // Sets default values
 AMyWorld::AMyWorld()
@@ -21,10 +22,10 @@ void AMyWorld::BeginPlay()
 	{
 		if (nullptr != Cast<AEPawn>(*ActorItr))
 			player = Cast<AEPawn>(*ActorItr);
-		else if (nullptr != Cast<APickUp>(*ActorItr))
-			pickUps.push_back(Cast<APickUp>(*ActorItr));
 		else if (nullptr != Cast<APickUpSpawner>(*ActorItr))
 			pickUpSpawners.push_back(Cast<APickUpSpawner>(*ActorItr));
+		else if (nullptr != Cast<AIce>(*ActorItr))
+			ice.push_back(Cast<AIce>(*ActorItr));
 	}
     if(player != nullptr)
     	player->OnDeath.AddUniqueDynamic(this, &AMyWorld::Clear);
@@ -44,6 +45,7 @@ void AMyWorld::Clear()
 	for(int i = 0; i < nr; i++)
 	{
 		pickUps[i]->Destroy();
+		//TODO B³¹d tu wyskakuje jak uroœnie na lodzie
 	}
 	
 	for(int i = 0; i < pickUpSpawners.size(); i++)
@@ -51,6 +53,10 @@ void AMyWorld::Clear()
 		xyz = pickUpSpawners[i]->SpawnPickUp();
 		if(xyz != nullptr)
 			pickUps.push_back(xyz);
+	}
+
+	for (int i = 0; i < ice.size(); i++) {
+		ice[i]->Reset();
 	}
 	
 }
