@@ -24,6 +24,8 @@ void AMyWorld::BeginPlay()
 			player = Cast<AEPawn>(*ActorItr);
 		else if (nullptr != Cast<APickUpSpawner>(*ActorItr))
 			pickUpSpawners.push_back(Cast<APickUpSpawner>(*ActorItr));
+		else if (nullptr != Cast<APickUp>(*ActorItr))
+			pickUps.push_back(Cast<APickUp>(*ActorItr));
 		else if (nullptr != Cast<AIce>(*ActorItr))
 			ice.push_back(Cast<AIce>(*ActorItr));
 	}
@@ -44,8 +46,13 @@ void AMyWorld::Clear()
 	int nr = pickUps.size();
 	for(int i = 0; i < nr; i++)
 	{
-		pickUps[i]->Destroy();
-		//TODO B³¹d tu wyskakuje jak uroœnie na lodzie
+		if(IsValid(pickUps[i])){
+			pickUps[i]->Destroy();
+		}
+		else{
+			
+			pickUps.erase(pickUps.begin() + i, pickUps.begin() + i + 1);
+		}
 	}
 	
 	for(int i = 0; i < pickUpSpawners.size(); i++)
