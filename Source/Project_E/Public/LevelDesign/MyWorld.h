@@ -5,6 +5,7 @@
 #include "PickUpSpawner.h"
 #include "MyWorld.generated.h"
 
+class AIce;
 class AEPawn;
 UCLASS()
 class PROJECT_E_API AMyWorld : public AActor
@@ -18,6 +19,7 @@ public:
 	AEPawn* player;
 	std::vector<APickUp*> pickUps;
 	std::vector<APickUpSpawner*> pickUpSpawners;
+	std::vector<AIce*> ice;
 	
 	UFUNCTION()
 	void Clear();

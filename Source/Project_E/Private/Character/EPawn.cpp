@@ -94,7 +94,7 @@ void AEPawn::Die()
 	if (isAnimationPlaying)
 		return;
 	
-	OnDeath.Broadcast();
+
 	EDiedEvent();
 	
 	// Spawn Death mark
@@ -114,11 +114,11 @@ void AEPawn::ResetLevel()
 		{
 			SetActorLocation(StartPosition);
 			EAnimationsDoneEvent();
-
 			SizeComponent->SetDefaultSize();
 	
 			Camera->SetDefaultFieldOfView();
 				
+			OnDeath.Broadcast();
 			// Score Timer
 			StopTimer();
 			isAnimationPlaying = false;
