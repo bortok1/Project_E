@@ -10,7 +10,6 @@ AMyWorld::AMyWorld()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
 }
 
 // Called when the game starts or when spawned
@@ -43,6 +42,8 @@ void AMyWorld::Clear()
 	int nr = pickUps.size();
 	for(int i = 0; i < nr; i++)
 	{
+		if(!pickUps[i]) continue;
+        if(!pickUps[i]->IsValidLowLevel()) continue;
 		pickUps[i]->Destroy();
 	}
 	
