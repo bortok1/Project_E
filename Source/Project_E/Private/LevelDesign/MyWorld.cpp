@@ -46,13 +46,10 @@ void AMyWorld::Clear()
 	int nr = pickUps.size();
 	for(int i = 0; i < nr; i++)
 	{
-		if(IsValid(pickUps[i])){
-			pickUps[i]->Destroy();
-		}
-		else{
-			
-			pickUps.erase(pickUps.begin() + i, pickUps.begin() + i + 1);
-		}
+		if(!pickUps[i]) continue;
+		if(!pickUps[i]->IsValidLowLevel()) continue;
+		pickUps[i]->Destroy();
+		
 	}
 	
 	for(int i = 0; i < pickUpSpawners.size(); i++)
