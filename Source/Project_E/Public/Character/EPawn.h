@@ -45,7 +45,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	class USizeManagerComponent* SizeComponent;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	class UEFloatingPawnMovement* MovementComponent;
 	
 	// Mesh == RootComponent

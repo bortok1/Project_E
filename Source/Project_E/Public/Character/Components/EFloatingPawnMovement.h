@@ -24,9 +24,12 @@ class PROJECT_E_API UEFloatingPawnMovement : public UFloatingPawnMovement
 	UFUNCTION()
 	void StopImmediately();
 	
-	void Gravity(float DeltaTime) const;
-	
-	UPROPERTY(EditAnywhere, Category="Movement")
+	void Gravity(float DeltaTime);
+public:
+	// To jump subtract from this value 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
+	float JumpVelocity;
+private:
 	float GravityForce;
 	
 public:

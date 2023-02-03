@@ -6,7 +6,7 @@
 
 UEFloatingPawnMovement::UEFloatingPawnMovement()
 {
-	GravityForce = 100.f;
+	GravityForce = 478.f;
 	MoveScale = 1.f;
 	AngularDumping = 20.f;
 }
@@ -32,11 +32,19 @@ void UEFloatingPawnMovement::StopImmediately()
 	this->StopMovementImmediately();
 }
 
-void UEFloatingPawnMovement::Gravity(float DeltaTime) const
+void UEFloatingPawnMovement::Gravity(float DeltaTime)
 {
+	JumpVelocity += GravityForce * DeltaTime;
+
 	FVector TeleportLocation = Owner->GetActorLocation();
-	TeleportLocation.Z -= GravityForce * DeltaTime;
-	Owner->TeleportTo(TeleportLocation, Owner->GetActorRotation());
+	TeleportLocation.Z -= JumpVelocity * DeltaTime + 0.5 * GravityForce * DeltaTime * DeltaTime;
+	
+	if (Owner->TeleportTo(TeleportLocation, Owner->GetActorRotation(), true)) {
+		Owner->TeleportTo(TeleportLocation, Owner->GetActorRotation(), false, true);
+	}
+	else {
+		JumpVelocity = GravityForce * DeltaTime;
+	}
 }
 
 FVector UEFloatingPawnMovement::GetVectorTowardsCursor(FVector2D CursorLocation)
