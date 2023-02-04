@@ -22,6 +22,8 @@ class PROJECT_E_API AEPawn : public APawn
 	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	
+	virtual void Tick(float DeltaTime) override;
+
 public:
 	AEPawn();
 	
@@ -63,8 +65,6 @@ public:
 	UPROPERTY()
 	AEPlayerController* EPlayerController;
 
-	FVector2D GetMousePosition() const;
-
 	void Die();
 	
 private:
@@ -88,7 +88,8 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void Win();
 
-	void Move(const FInputActionValue& ActionValue);
+	void MoveEvent(const struct FInputActionValue& ActionValue);
+	bool bMoveInputPressed;
 	
 	UFUNCTION()
 	void OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,

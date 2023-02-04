@@ -13,31 +13,32 @@ class PROJECT_E_API UEFloatingPawnMovement : public UFloatingPawnMovement
 	GENERATED_BODY()
 
 	UEFloatingPawnMovement();
-	
-	virtual void BeginPlay() override;
-
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY()
 	AEPawn* Owner;
-
-	UFUNCTION()
-	void StopImmediately();
 	
-	void Gravity(float DeltaTime);
+	virtual void BeginPlay() override;
+
 public:
+	void Move(float DeltaTime, bool bMoveInputPressed);
+
 	// To jump subtract from this value 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
 	float JumpVelocity;
-private:
-	float GravityForce;
 	
-public:
-	static FVector GetVectorTowardsCursor(FVector2D CursorLocation);
+private:
+	UFUNCTION()
+	void StopMovement();
+	
+	void Gravity(float DeltaTime);
+	bool isAirTime;
+	bool bStopAfterReset;
+	float GravityForce;
+	float SpeedDumpWhileAirTime;
+	FVector LastCursorLocation;
+	
+	FVector GetVectorTowardsCursor() const;
+	FVector2D GetMousePosition() const;
 
-	UPROPERTY(EditAnywhere, Category="Movement")
-	float MoveScale;
-
-	UPROPERTY(EditAnywhere, Category = "Movement")
-	float AngularDumping;
+	float MoveSpeed;
 };
