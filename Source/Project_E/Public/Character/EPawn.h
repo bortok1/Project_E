@@ -44,7 +44,7 @@ public:
 	void EShrinkEvent();
 	
 	// Components
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	class USizeManagerComponent* SizeComponent;
 
 	UPROPERTY(BlueprintReadWrite)
@@ -67,6 +67,12 @@ public:
 
 	void Die();
 	
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	UCurveFloat* GrowCurveFloat;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	UCurveFloat* ShrinkCurveFloat;
+
 private:
 	// Actor spawned at place of death
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
