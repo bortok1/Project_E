@@ -51,7 +51,7 @@ public:
 	class UEFloatingPawnMovement* MovementComponent;
 	
 	// Mesh == RootComponent
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	class UStaticMeshComponent* CharacterMesh;
 
 	// Top down camera

@@ -76,8 +76,6 @@ private:
 	
 	UPROPERTY()
 	UECameraComponent* Camera;
-
-	FTimerHandle GrowTimeHandle;
 	
 	/** If equal or lower cube can't get smaller*/
 	UPROPERTY(Category = "Mesh", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
@@ -102,4 +100,7 @@ private:
 
 public:
 	[[nodiscard]]float GetMass() const { return Mass; }
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		FTimerHandle GrowTimeHandle;
 };
