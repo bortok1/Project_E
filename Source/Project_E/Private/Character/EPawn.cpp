@@ -53,7 +53,6 @@ AEPawn::AEPawn()
 	TimerWidgetRef = CreateWidget<UUserWidget>(GetWorld(), TimerWidgetClass);
 
 	isAnimationPlaying = false;
-	bMoveInputPressed = false;
 }
 
 void AEPawn::BeginPlay()
@@ -70,7 +69,7 @@ void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	AEPlayerController* EPC = Cast<AEPlayerController>(Controller);
 	check(EIC && EPC);
-	EIC->BindAction(EPC->MoveAction, ETriggerEvent::Triggered, this, &AEPawn::MoveEvent);
+	EIC->BindAction(EPC->MoveAction, ETriggerEvent::Triggered, this, &AEPawn::Move);
 
 	const ULocalPlayer* LocalPlayer = EPC->GetLocalPlayer();
 	check(LocalPlayer);
@@ -80,17 +79,13 @@ void AEPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Subsystem->AddMappingContext(EPC->PawnMappingContext, 0);
 }
 
-void AEPawn::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	MovementComponent->Move(DeltaTime, bMoveInputPressed);
-	bMoveInputPressed = false;
-}
-
 void AEPawn::Win()
 {
+	//if (isAnimationPlaying)
+		//return;
+	
 	WriteScoreTimer();
+	//ResetLevel();
 	EWinEvent();
 }
 
@@ -99,6 +94,7 @@ void AEPawn::Die()
 	if (isAnimationPlaying)
 		return;
 	
+
 	EDiedEvent();
 	
 	// Spawn Death mark
@@ -174,7 +170,7 @@ bool AEPawn::WriteScoreTimer()
 	return false;
 }
 
-void AEPawn::MoveEvent(const struct FInputActionValue& ActionValue)
+void AEPawn::Move(const struct FInputActionValue& ActionValue)
 {
 	const FVector RootBackwardVector = -RootComponent->GetForwardVector();
 	const FRotator RootRotation = RootBackwardVector.Rotation();
@@ -196,8 +192,17 @@ void AEPawn::MoveEvent(const struct FInputActionValue& ActionValue)
 	
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NS_Particles,
 		GetActorLocation() + ParticlePositionOffset * RootBackwardVector, RootRotation, FVector(GetActorScale().X));
+	
+	const FVector VectorToCursor = MovementComponent->GetVectorTowardsCursor(GetMousePosition());
+	AddMovementInput(VectorToCursor, MovementComponent->MoveScale/SizeComponent->GetMass());
+	CharacterMesh->SetRelativeRotation(VectorToCursor.Rotation());
+}
 
-	bMoveInputPressed = true;
+FVector2D AEPawn::GetMousePosition() const
+{
+	FVector2D Mouse = FVector2d::Zero();
+	EPlayerController->GetMousePosition(Mouse.X, Mouse.Y);
+	return Mouse;
 }
 
 void AEPawn::SpawnDeathMark(FVector loc, FRotator rot) const

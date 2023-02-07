@@ -20,49 +20,16 @@ void USizeManagerComponent::BeginPlay()
 	Movement = Owner->MovementComponent;
 	Camera = Owner->Camera;
 	bFirstMove = false;
-	CurrentScale = FVector(ActorMinSize, ActorMinSize, 1);
-	IsAnimating = false;
-	HowManyShrink = 0;
-	HowManyGrow = 0;
 
-	SetDefaultSize();
-	//Animation
-
-	GrowCurveFloat = Owner->GrowCurveFloat;
-	ShrinkCurveFloat = Owner->ShrinkCurveFloat;
-
-	if (GrowCurveFloat)
-	{
-		FOnTimelineFloat TimelineProgress;
-		TimelineProgress.BindUFunction(this, FName("AnimationTimelineProgress"));
-		GrowTimeline.AddInterpFloat(GrowCurveFloat, TimelineProgress);
-		FOnTimelineEvent TimelineEndEvent;
-		TimelineEndEvent.BindUFunction(this, FName("AnimationEndGrow"));
-		GrowTimeline.SetTimelineFinishedFunc(TimelineEndEvent);
-		GrowTimeline.SetPlayRate(2);
-	}
-
-	
-	if (ShrinkCurveFloat)
-	{
-		FOnTimelineFloat TimelineProgress;
-		TimelineProgress.BindUFunction(this, FName("AnimationTimelineProgress"));
-		ShrinkTimeline.AddInterpFloat(ShrinkCurveFloat, TimelineProgress);
-		FOnTimelineEvent TimelineEndEvent;
-		TimelineEndEvent.BindUFunction(this, FName("AnimationEndShrink"));
-		ShrinkTimeline.SetTimelineFinishedFunc(TimelineEndEvent);
-		ShrinkTimeline.SetPlayRate(2);
-	}
+	// Timer exists, but is not ticking
+	GetWorld()->GetTimerManager().SetTimer(
+		GrowTimeHandle, this, &USizeManagerComponent::GrowPawn, GrowSpeed, false, GrowSpeed);
+	GetWorld()->GetTimerManager().PauseTimer(GrowTimeHandle);
 }
 
 void USizeManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	//Animation
-	GrowTimeline.TickTimeline(DeltaTime);
-	ShrinkTimeline.TickTimeline(DeltaTime);
-
 
 	// Pawn is moving
 	if(Movement->Velocity.Length() != 0)
@@ -83,117 +50,51 @@ void USizeManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 void USizeManagerComponent::GrowPawn()
 {
-		if (!IsAnimating)
+	if (Mesh->GetRelativeScale3D().X < ActorMaxSize)
+	{
+		Mesh->SetRelativeScale3D(Mesh->GetRelativeScale3D() + FVector(GrowStep, GrowStep, 0));
+
+		if(!Owner->TeleportTo(Owner->GetActorLocation() + 0.00001, Owner->GetActorRotation(), true))
 		{
-			if (HowManyGrow > 0) HowManyGrow--;
-			if (CurrentScale.X < ActorMaxSize + GrowStep)
-			{
-				IsAnimating = true;
-				AnimationBeginScale = CurrentScale;
-				AnimationEndScale = CurrentScale + FVector(GrowStep, GrowStep, 0);
-				GrowTimeline.PlayFromStart();
-
-				if (!Owner->TeleportTo(Owner->GetActorLocation() + 0.00001, Owner->GetActorRotation(), true))
-				{
-					Owner->Die();
-				}
-
-				Mass += GrowStep / 3;
-				Camera->ZoomIn();
-
-				if (!GetWorld()->GetTimerManager().IsTimerPaused(GrowTimeHandle))
-				{
-					GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
-				}
-
-				Owner->EGrowEvent();
-			}
+			Owner->Die();
 		}
-		else
+		
+		Mass += GrowStep / 3;
+		Camera->ZoomIn();
+
+		if(!GetWorld()->GetTimerManager().IsTimerPaused(GrowTimeHandle))
 		{
-			HowManyGrow++;
+			GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
 		}
+
+		Owner->EGrowEvent();
+	}
+	else
+	{
+		Owner->Die();
+	}
 }
 
 void USizeManagerComponent::ShrinkPawn()
 {
-	
-		if (!IsAnimating)
+	if (Mesh->GetRelativeScale3D().X > ActorMinSize)
+	{
+		Mesh->SetRelativeScale3D(Mesh->GetRelativeScale3D() - FVector(GrowStep, GrowStep, 0));
+		Mass -= GrowStep / 3;
+		Camera->ZoomOut();
+
+		if(!GetWorld()->GetTimerManager().IsTimerPaused(GrowTimeHandle))
 		{
-			if (HowManyShrink > 0) HowManyShrink--;
-			if (CurrentScale.X > ActorMinSize)
-			{
-				IsAnimating = true;
-				AnimationBeginScale = CurrentScale;
-				AnimationEndScale = CurrentScale - FVector(GrowStep, GrowStep, 0);
-				ShrinkTimeline.PlayFromStart();
-
-				Mass -= GrowStep / 3;
-				Camera->ZoomOut();
-
-				if (!GetWorld()->GetTimerManager().IsTimerPaused(GrowTimeHandle))
-				{
-					GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
-				}
-
-				Owner->EShrinkEvent();
-			}
+			GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
 		}
-		else
-		{
-			HowManyShrink++;
-		}
-}
-
-void USizeManagerComponent::AnimationTimelineProgress(float Value)
-{
-	FVector NewScale = FMath::Lerp(AnimationBeginScale, AnimationEndScale, Value);
-	Mesh->SetRelativeScale3D(NewScale);
-}
-
-void USizeManagerComponent::AnimationEndGrow()
-{
-	IsAnimating = false;
-	CurrentScale = AnimationEndScale;
-	if (CurrentScale.X >= ActorMaxSize + GrowStep)
-	{
-		Owner->Die();
-	}
-	else if (HowManyShrink)
-	{
-		ShrinkPawn();
-	}
-	else if (HowManyGrow)
-	{
-		GrowPawn();
-	}
-}
-
-void USizeManagerComponent::AnimationEndShrink()
-{
-	IsAnimating = false;
-	CurrentScale = AnimationEndScale;
-	if (HowManyShrink)
-	{
-		ShrinkPawn();
-	}
-	else if (HowManyGrow)
-	{
-		GrowPawn();
+		
+		Owner->EShrinkEvent();
 	}
 }
 
 void USizeManagerComponent::SetDefaultSize()
 {
 	Mesh->SetRelativeScale3D(FVector(ActorMinSize, ActorMinSize, 1));
-	CurrentScale = FVector(ActorMinSize, ActorMinSize, 1);
-	AnimationBeginScale = FVector(ActorMinSize, ActorMinSize, 1);
-	HowManyShrink = 0;
-	HowManyGrow = 0;
-	IsAnimating = 0;
-	GrowTimeline.Stop();
-	ShrinkTimeline.Stop();
-
 	Mass = DefaultMass;
 	
 	// Timer exists, but is not ticking

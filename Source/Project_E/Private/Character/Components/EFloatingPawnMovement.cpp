@@ -3,17 +3,12 @@
 
 #include "Character/Components/EFloatingPawnMovement.h"
 #include "Character/EPawn.h"
-#include "Character/Components/SizeManagerComponent.h"
-#include "Character/PlayerController/EPlayerController.h"
 
 UEFloatingPawnMovement::UEFloatingPawnMovement()
 {
-	GravityForce = 478.f;
-	MoveSpeed = 1.f;
-	SpeedDumpWhileAirTime = 0.5f;
-	
-	isAirTime = true;
-	bStopAfterReset = true;
+	GravityForce = 100.f;
+	MoveScale = 1.f;
+	AngularDumping = 20.f;
 }
 
 void UEFloatingPawnMovement::BeginPlay()
@@ -21,56 +16,30 @@ void UEFloatingPawnMovement::BeginPlay()
 	Super::BeginPlay();
 
 	Owner = Cast<AEPawn>(GetOwner());
-	Owner->OnDeath.AddUniqueDynamic(this, &UEFloatingPawnMovement::StopMovement);
-
-	FVector2D ScreenResolution;
-	GEngine->GameViewport->GetViewportSize(ScreenResolution);
-	LastCursorLocation = FVector((ScreenResolution * 0.5f), 0);
+	Owner->OnDeath.AddUniqueDynamic(this, &UEFloatingPawnMovement::StopImmediately);
 }
 
-void UEFloatingPawnMovement::Move(float DeltaTime, bool bMoveInputPressed = false)
+void UEFloatingPawnMovement::TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
 {
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
 	Gravity(DeltaTime);
-
-	if(bMoveInputPressed && !isAirTime)
-	{
-		LastCursorLocation = GetVectorTowardsCursor();
-		Owner->AddMovementInput(LastCursorLocation, MoveSpeed/Owner->SizeComponent->GetMass());
-		Owner->CharacterMesh->SetRelativeRotation(LastCursorLocation.Rotation());
-		bStopAfterReset = false;
-	}
-	else if(isAirTime && !bStopAfterReset){
-		Owner->AddMovementInput(LastCursorLocation, MoveSpeed/Owner->SizeComponent->GetMass());
-		Owner->CharacterMesh->SetRelativeRotation(GetVectorTowardsCursor().Rotation());
-	}
 }
 
-void UEFloatingPawnMovement::StopMovement()
+void UEFloatingPawnMovement::StopImmediately()
 {
-	bStopAfterReset = true;
-	StopMovementImmediately();
+	this->StopMovementImmediately();
 }
 
-void UEFloatingPawnMovement::Gravity(float DeltaTime)
+void UEFloatingPawnMovement::Gravity(float DeltaTime) const
 {
-	JumpVelocity += GravityForce * DeltaTime;
-
 	FVector TeleportLocation = Owner->GetActorLocation();
-	TeleportLocation.Z -= JumpVelocity * DeltaTime + 0.5 * GravityForce * DeltaTime * DeltaTime;
-
-	if (Owner->TeleportTo(TeleportLocation, Owner->GetActorRotation(), true)) {
-		Owner->TeleportTo(TeleportLocation, Owner->GetActorRotation(), false, true);
-		
-		isAirTime = true;
-		LastCursorLocation -= LastCursorLocation * SpeedDumpWhileAirTime * DeltaTime;
-	}
-	else {
-		JumpVelocity = GravityForce * DeltaTime;
-		isAirTime = false;
-	}
+	TeleportLocation.Z -= GravityForce * DeltaTime;
+	Owner->TeleportTo(TeleportLocation, Owner->GetActorRotation());
 }
 
-FVector UEFloatingPawnMovement::GetVectorTowardsCursor() const
+FVector UEFloatingPawnMovement::GetVectorTowardsCursor(FVector2D CursorLocation)
 {
 	// Take half of screen resolution
 	FVector2D HalfResolution = FVector2D::Zero();
@@ -81,12 +50,6 @@ FVector UEFloatingPawnMovement::GetVectorTowardsCursor() const
 	}
 
 	// Direction from screen center (player) to mouse cursor
-	return FVector((GetMousePosition() - HalfResolution).GetSafeNormal(),0);
+	return FVector((CursorLocation - HalfResolution).GetSafeNormal(),0);
 }
 
-FVector2D UEFloatingPawnMovement::GetMousePosition() const
-{
-	FVector2D Mouse = FVector2d::Zero();
-	Owner->EPlayerController->GetMousePosition(Mouse.X, Mouse.Y);
-	return Mouse;
-}
