@@ -2,8 +2,10 @@
 
 #pragma once
 
+#include "Components/TimelineComponent.h"
 #include "SizeManagerComponent.generated.h"
 
+class uCurveFloat;
 class AEPawn;
 class UECameraComponent;
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -21,6 +23,16 @@ class PROJECT_E_API USizeManagerComponent : public UActorComponent
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 public:
+
+	UFUNCTION()
+	void AnimationTimelineProgress(float Value);
+
+	UFUNCTION()
+	void AnimationEndGrow();
+
+	UFUNCTION()
+	void AnimationEndShrink();
+
 	void SetDefaultSize();
 
 	UFUNCTION(BlueprintCallable)
@@ -29,7 +41,27 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ShrinkPawn();
 
+
+	UPROPERTY()
+	UCurveFloat* GrowCurveFloat;
+
+	UPROPERTY()
+	UCurveFloat* ShrinkCurveFloat;
+	
+	UPROPERTY(BlueprintReadOnly)
+	FVector AnimationEndScale;
+
 private:
+
+	FTimeline GrowTimeline, ShrinkTimeline;
+
+	FVector AnimationBeginScale;
+
+	FVector CurrentScale;
+
+	bool IsAnimating;
+
+	int HowManyShrink, HowManyGrow;
 
 	bool bFirstMove;
 
@@ -44,8 +76,6 @@ private:
 	
 	UPROPERTY()
 	UECameraComponent* Camera;
-
-	FTimerHandle GrowTimeHandle;
 	
 	/** If equal or lower cube can't get smaller*/
 	UPROPERTY(Category = "Mesh", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
@@ -70,4 +100,7 @@ private:
 
 public:
 	[[nodiscard]]float GetMass() const { return Mass; }
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		FTimerHandle GrowTimeHandle;
 };

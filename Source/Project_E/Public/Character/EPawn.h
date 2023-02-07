@@ -22,6 +22,8 @@ class PROJECT_E_API AEPawn : public APawn
 	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	
+	virtual void Tick(float DeltaTime) override;
+
 public:
 	AEPawn();
 	
@@ -42,14 +44,14 @@ public:
 	void EShrinkEvent();
 	
 	// Components
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	class USizeManagerComponent* SizeComponent;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	class UEFloatingPawnMovement* MovementComponent;
 	
 	// Mesh == RootComponent
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	class UStaticMeshComponent* CharacterMesh;
 
 	// Top down camera
@@ -63,10 +65,14 @@ public:
 	UPROPERTY()
 	AEPlayerController* EPlayerController;
 
-	FVector2D GetMousePosition() const;
-
 	void Die();
 	
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	UCurveFloat* GrowCurveFloat;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	UCurveFloat* ShrinkCurveFloat;
+
 private:
 	// Actor spawned at place of death
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
@@ -88,7 +94,8 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void Win();
 
-	void Move(const FInputActionValue& ActionValue);
+	void MoveEvent(const struct FInputActionValue& ActionValue);
+	bool bMoveInputPressed;
 	
 	UFUNCTION()
 	void OnActorHit(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
