@@ -90,6 +90,8 @@ void AEPawn::Tick(float DeltaTime)
 
 void AEPawn::Win()
 {
+	if(isAnimationPlaying)
+		return;
 	WriteScoreTimer();
 	EWinEvent();
 }
