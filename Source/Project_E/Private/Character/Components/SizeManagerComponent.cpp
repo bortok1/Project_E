@@ -84,61 +84,65 @@ void USizeManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 void USizeManagerComponent::GrowPawn()
 {
-		if (!IsAnimating)
+	if (!IsAnimating)
+	{
+		if (HowManyGrow > 0) HowManyGrow--;
+		if (CurrentScale.X < ActorMaxSize + GrowStep)
 		{
-			if (HowManyGrow > 0) HowManyGrow--;
-			if (CurrentScale.X < ActorMaxSize + GrowStep)
+			if(bFirstMove)
 			{
-				IsAnimating = true;
-				AnimationBeginScale = CurrentScale;
-				AnimationEndScale = CurrentScale + FVector(GrowStep, GrowStep, 0);
-				GrowTimeline.PlayFromStart();
-
 				if (!Owner->TeleportTo(Owner->GetActorLocation() + 0.00001, Owner->GetActorRotation(), true))
 				{
 					Owner->Die();
 				}
-
-				Mass += GrowStep / 3;
-				Camera->ZoomIn();
-				
 				GetWorld()->GetTimerManager().SetTimer(
 			GrowTimeHandle, this, &USizeManagerComponent::GrowPawn, GrowSpeed, false, GrowSpeed);
-				
-				Owner->EGrowEvent();
 			}
+			
+			IsAnimating = true;
+			AnimationBeginScale = CurrentScale;
+			AnimationEndScale = CurrentScale + FVector(GrowStep, GrowStep, 0);
+			GrowTimeline.PlayFromStart();
+
+			Mass += GrowStep / 3;
+			Camera->ZoomIn();
+			
+			Owner->EGrowEvent();
 		}
-		else
-		{
-			HowManyGrow++;
-		}
+	}
+	else
+	{
+		HowManyGrow++;
+	}
 }
 
 void USizeManagerComponent::ShrinkPawn()
 {
-		if (!IsAnimating)
+	if (!IsAnimating)
+	{
+		if (HowManyShrink > 0) HowManyShrink--;
+		if (CurrentScale.X > ActorMinSize)
 		{
-			if (HowManyShrink > 0) HowManyShrink--;
-			if (CurrentScale.X > ActorMinSize)
+			if(bFirstMove)
 			{
-				IsAnimating = true;
-				AnimationBeginScale = CurrentScale;
-				AnimationEndScale = CurrentScale - FVector(GrowStep, GrowStep, 0);
-				ShrinkTimeline.PlayFromStart();
-
-				Mass -= GrowStep / 3;
-				Camera->ZoomOut();
-				
 				GetWorld()->GetTimerManager().SetTimer(
 			GrowTimeHandle, this, &USizeManagerComponent::GrowPawn, GrowSpeed, false, GrowSpeed);
-
-				Owner->EShrinkEvent();
 			}
+			IsAnimating = true;
+			AnimationBeginScale = CurrentScale;
+			AnimationEndScale = CurrentScale - FVector(GrowStep, GrowStep, 0);
+			ShrinkTimeline.PlayFromStart();
+
+			Mass -= GrowStep / 3;
+			Camera->ZoomOut();
+
+			Owner->EShrinkEvent();
 		}
-		else
-		{
-			HowManyShrink++;
-		}
+	}
+	else
+	{
+		HowManyShrink++;
+	}
 }
 
 void USizeManagerComponent::AnimationTimelineProgress(float Value)
