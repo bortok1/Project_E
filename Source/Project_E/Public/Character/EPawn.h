@@ -88,6 +88,7 @@ private:
 	
 	// Where player Begins play
 	FVector StartPosition;
+	FRotator StartRotation;
 	
 	void ResetLevel();
 

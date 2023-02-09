@@ -14,12 +14,13 @@ USizeManagerComponent::USizeManagerComponent()
 void USizeManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	Owner = Cast<AEPawn>(GetOwner());
 	Mesh = Owner->CharacterMesh;
 	Movement = Owner->MovementComponent;
 	Camera = Owner->Camera;
 	bFirstMove = false;
+	ignoreFirstInputAfterReset = false;
 	CurrentScale = FVector(ActorMinSize, ActorMinSize, 1);
 	IsAnimating = false;
 	HowManyShrink = 0;
@@ -63,6 +64,11 @@ void USizeManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	GrowTimeline.TickTimeline(DeltaTime);
 	ShrinkTimeline.TickTimeline(DeltaTime);
 
+	if(ignoreFirstInputAfterReset)
+	{
+		ignoreFirstInputAfterReset = false;
+		return;
+	}
 
 	// Pawn is moving
 	if(Movement->Velocity.Length() != 0)
@@ -71,13 +77,8 @@ void USizeManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 			Owner->ResetTimer();
 			bFirstMove = true;
 		}
-		GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
-	}
-	// Pawn is not moving && timer exists
-	else if(Movement->Velocity.Length() == 0 && !GetWorld()->GetTimerManager().TimerExists(GrowTimeHandle))
-	{
 		GetWorld()->GetTimerManager().SetTimer(
-		GrowTimeHandle, this, &USizeManagerComponent::GrowPawn, GrowSpeed, false, GrowSpeed);
+			GrowTimeHandle, this, &USizeManagerComponent::GrowPawn, GrowSpeed, false, GrowSpeed);
 	}
 }
 
@@ -100,12 +101,10 @@ void USizeManagerComponent::GrowPawn()
 
 				Mass += GrowStep / 3;
 				Camera->ZoomIn();
-
-				if (!GetWorld()->GetTimerManager().IsTimerPaused(GrowTimeHandle))
-				{
-					GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
-				}
-
+				
+				GetWorld()->GetTimerManager().SetTimer(
+			GrowTimeHandle, this, &USizeManagerComponent::GrowPawn, GrowSpeed, false, GrowSpeed);
+				
 				Owner->EGrowEvent();
 			}
 		}
@@ -117,7 +116,6 @@ void USizeManagerComponent::GrowPawn()
 
 void USizeManagerComponent::ShrinkPawn()
 {
-	
 		if (!IsAnimating)
 		{
 			if (HowManyShrink > 0) HowManyShrink--;
@@ -130,11 +128,9 @@ void USizeManagerComponent::ShrinkPawn()
 
 				Mass -= GrowStep / 3;
 				Camera->ZoomOut();
-
-				if (!GetWorld()->GetTimerManager().IsTimerPaused(GrowTimeHandle))
-				{
-					GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
-				}
+				
+				GetWorld()->GetTimerManager().SetTimer(
+			GrowTimeHandle, this, &USizeManagerComponent::GrowPawn, GrowSpeed, false, GrowSpeed);
 
 				Owner->EShrinkEvent();
 			}
@@ -197,10 +193,10 @@ void USizeManagerComponent::SetDefaultSize()
 	Mass = DefaultMass;
 	
 	// Timer exists, but is not ticking
-	GetWorld()->GetTimerManager().SetTimer(
-		GrowTimeHandle, this, &USizeManagerComponent::GrowPawn, GrowSpeed, false, GrowSpeed);
-	GetWorld()->GetTimerManager().PauseTimer(GrowTimeHandle);
+	GetWorld()->GetTimerManager().ClearTimer(GrowTimeHandle);
+	
 	Owner->StopTimer();
 	bFirstMove = false;
+	ignoreFirstInputAfterReset = true;
 }
 
