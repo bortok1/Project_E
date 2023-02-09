@@ -64,6 +64,7 @@ private:
 	int HowManyShrink, HowManyGrow;
 
 	bool bFirstMove;
+	bool ignoreFirstInputAfterReset;
 
 	UPROPERTY()
 	AEPawn* Owner;

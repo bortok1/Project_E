@@ -116,7 +116,7 @@ void AEPawn::ResetLevel()
 	FTimerDelegate Delegate;
 	Delegate.BindLambda([&]()
 		{
-			SetActorLocation(StartPosition);
+			TeleportTo(StartPosition, StartRotation, false, true);
 			EAnimationsDoneEvent();
 			SizeComponent->SetDefaultSize();
 	
