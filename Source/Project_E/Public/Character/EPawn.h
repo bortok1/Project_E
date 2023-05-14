@@ -74,6 +74,9 @@ public:
 	UCurveFloat* ShrinkCurveFloat;
 
 private:
+
+	FVector2D JoystickAxis;
+
 	// Actor spawned at place of death
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 	TSubclassOf<AActor> ADeathMark;
@@ -103,7 +106,6 @@ private:
 		UPrimitiveComponent* PrimitiveComponent1, FVector Vector, const FHitResult& HitResult);
 	
 
-
 public:	
 	UFUNCTION(BlueprintCallable)
 	bool ResetTimer();
@@ -114,7 +116,12 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	UUserWidget* TimerWidgetRef;
+
+	FVector2D GetJoystickAxis() { return JoystickAxis; }
 	
 	[[nodiscard]] UECameraComponent* GetTopDownCameraComponent() const { return Camera; }
 	[[nodiscard]] USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	float MoveForward();
+
 };

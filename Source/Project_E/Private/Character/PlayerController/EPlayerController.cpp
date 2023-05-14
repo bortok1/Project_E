@@ -18,9 +18,15 @@ void AEPlayerController::SetupInputComponent()
 	// Create these objects here and not in constructot because we only need them on the client.
 	PawnMappingContext = NewObject<UInputMappingContext>(this);
 
+	//Windows settings
+	//MoveAction = NewObject<UInputAction>(this);
+	//MoveAction->ValueType = EInputActionValueType::Boolean;
+	//PawnMappingContext->MapKey(MoveAction, EKeys::LeftMouseButton);
+
+	//Mobile settings
 	MoveAction = NewObject<UInputAction>(this);
-	MoveAction->ValueType = EInputActionValueType::Boolean;
-	PawnMappingContext->MapKey(MoveAction, EKeys::LeftMouseButton);
+	MoveAction->ValueType = EInputActionValueType::Axis2D;
+	PawnMappingContext->MapKey(MoveAction, EKeys::Gamepad_Right2D);
 }
 
 void AEPlayerController::BeginPlayingState()
@@ -28,7 +34,3 @@ void AEPlayerController::BeginPlayingState()
 	Super::BeginPlayingState();
 	EPawn = Cast<AEPawn>(GetPawn());
 }
-
-
-
-

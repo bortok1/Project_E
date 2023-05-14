@@ -39,6 +39,6 @@ private:
 	
 	FVector GetVectorTowardsCursor() const;
 	FVector2D GetMousePosition() const;
-
+	FVector2D GetThumbstickPosition() const;
 	float MoveSpeed;
 };

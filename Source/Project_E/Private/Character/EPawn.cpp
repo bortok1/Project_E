@@ -38,7 +38,6 @@ AEPawn::AEPawn()
 	Camera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	
 	EPlayerController = Cast<AEPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	MovementComponent = CreateDefaultSubobject<UEFloatingPawnMovement>("MovementComponent");
 	SizeComponent = CreateDefaultSubobject<USizeManagerComponent>("SizeComponent");
@@ -119,6 +118,7 @@ void AEPawn::ResetLevel()
 	Delegate.BindLambda([&]()
 		{
 			TeleportTo(StartPosition, StartRotation, false, true);
+			//TODO tu coœ siê psuje
 			EAnimationsDoneEvent();
 			SizeComponent->SetDefaultSize();
 	
@@ -178,6 +178,8 @@ bool AEPawn::WriteScoreTimer()
 
 void AEPawn::MoveEvent(const struct FInputActionValue& ActionValue)
 {
+	JoystickAxis = ActionValue.Get<FVector2D>();
+
 	const FVector RootBackwardVector = -RootComponent->GetForwardVector();
 	const FRotator RootRotation = RootBackwardVector.Rotation();
 	FVector ParticlePositionOffset;

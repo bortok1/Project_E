@@ -5,6 +5,7 @@
 #include "Character/EPawn.h"
 #include "Character/Components/SizeManagerComponent.h"
 #include "Character/PlayerController/EPlayerController.h"
+#include "GameFramework/PlayerController.h"
 
 UEFloatingPawnMovement::UEFloatingPawnMovement()
 {
@@ -81,12 +82,24 @@ FVector UEFloatingPawnMovement::GetVectorTowardsCursor() const
 	}
 
 	// Direction from screen center (player) to mouse cursor
-	return FVector((GetMousePosition() - HalfResolution).GetSafeNormal(),0);
+	//Windows settings
+	//return FVector((GetMousePosition() - HalfResolution).GetSafeNormal(),0);
+
+	//Mobile settings
+	return FVector(GetThumbstickPosition(), 0);
 }
 
+//For Windows settings
 FVector2D UEFloatingPawnMovement::GetMousePosition() const
 {
 	FVector2D Mouse = FVector2d::Zero();
 	Owner->EPlayerController->GetMousePosition(Mouse.X, Mouse.Y);
 	return Mouse;
+}
+
+//For mobile settings
+FVector2D UEFloatingPawnMovement::GetThumbstickPosition() const
+{
+	FVector2D Thumbstick = Owner->GetJoystickAxis();
+	return Thumbstick;
 }
