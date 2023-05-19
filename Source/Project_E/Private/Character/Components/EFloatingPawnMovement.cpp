@@ -86,7 +86,7 @@ FVector UEFloatingPawnMovement::GetVectorTowardsCursor() const
 	//return FVector((GetMousePosition() - HalfResolution).GetSafeNormal(),0);
 
 	//Mobile settings
-	return FVector(GetThumbstickPosition(), 0);
+	//return FVector(GetThumbstickPosition(), 0);
 }
 
 //For Windows settings
