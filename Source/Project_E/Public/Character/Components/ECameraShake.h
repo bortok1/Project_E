@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class PROJECT_E_API UECameraShake : public ULegacyCameraShake
+class PROJECT_E_API UECameraShake : public UMatineeCameraShake
 {
 	GENERATED_BODY()
 	UECameraShake();
