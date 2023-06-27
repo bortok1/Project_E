@@ -48,5 +48,9 @@
 			"Name": "RawInput",
 			"Enabled": true
 		}
+	],
+	"TargetPlatforms": [
+		"Android",
+		"Windows"
 	]
 }
