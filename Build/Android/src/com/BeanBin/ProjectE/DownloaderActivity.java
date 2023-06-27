@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.YourCompany.Project_E;
+package com.BeanBin.ProjectE;
 
 import com.android.vending.expansion.zipfile.ZipResourceFile;
 import com.android.vending.expansion.zipfile.ZipResourceFile.ZipEntryRO;

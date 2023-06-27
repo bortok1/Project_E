@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.YourCompany.Project_E;
+package com.BeanBin.ProjectE;
 
 import com.google.android.vending.expansion.downloader.impl.DownloaderService;
 
@@ -61,6 +61,6 @@ public class OBBDownloaderService extends DownloaderService {
      */
     @Override
     public String getAlarmReceiverClassName() {
-        return com.YourCompany.Project_E.AlarmReceiver.class.getName();
+        return com.BeanBin.ProjectE.AlarmReceiver.class.getName();
     }
 }
