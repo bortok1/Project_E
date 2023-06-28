@@ -1,7 +1,7 @@
 // Copyright Bean Bin, All Rights Reserved.
 
 #pragma once
-
+#include <vector>
 #include "MyWorld.generated.h"
 
 class AIce;
