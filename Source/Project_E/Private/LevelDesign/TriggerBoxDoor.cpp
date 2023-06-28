@@ -29,16 +29,13 @@ void ATriggerBoxDoor::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 void ATriggerBoxDoor::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (const AEPawn* Pawn = Cast<AEPawn>(OtherActor)) {
-		FVector Scale = Pawn->GetActorRelativeScale3D();
+		const float ScaleX = Pawn->GetActorRelativeScale3D().X;
 		float duration;
 
-		switch(static_cast<int>(Scale[0]))
-		{
-		case 1: duration = .5f; break;
-		case 2: duration = 2.f; break;
-		case 3: duration = 4.f; break;
-		default: duration = 8.f;
-		}
+		if (ScaleX < 1.5f) { duration = .5f; }
+		else if (ScaleX < 2.5f) { duration = 2.0f; }
+		else if (ScaleX < 3.5f) { duration = 4.0f; }
+		else { duration = 8.0f; }
 		GetWorldTimerManager().SetTimer(Timer, this, &ATriggerBoxDoor::CloseDoors, duration, false);
 	}
 }
