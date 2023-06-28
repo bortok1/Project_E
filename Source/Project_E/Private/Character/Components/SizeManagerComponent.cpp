@@ -2,6 +2,7 @@
 
 
 #include "Character/Components/SizeManagerComponent.h"
+
 #include "Character/EPawn.h"
 #include "Character/Components/ECameraComponent.h"
 #include "Character/Components/EFloatingPawnMovement.h"
@@ -19,16 +20,19 @@ void USizeManagerComponent::BeginPlay()
 	Mesh = Owner->CharacterMesh;
 	Movement = Owner->MovementComponent;
 	Camera = Owner->Camera;
+	
 	bFirstMove = false;
 	ignoreFirstInputAfterReset = false;
-	CurrentScale = FVector(ActorMinSize, ActorMinSize, 1);
 	IsAnimating = false;
+
+	CurrentScale = FVector(ActorMinSize, ActorMinSize, 1);
+	
 	HowManyShrink = 0;
 	HowManyGrow = 0;
 
 	SetDefaultSize();
+	
 	//Animation
-
 	GrowCurveFloat = Owner->GrowCurveFloat;
 	ShrinkCurveFloat = Owner->ShrinkCurveFloat;
 
@@ -147,7 +151,7 @@ void USizeManagerComponent::ShrinkPawn()
 
 void USizeManagerComponent::AnimationTimelineProgress(float Value)
 {
-	FVector NewScale = FMath::Lerp(AnimationBeginScale, AnimationEndScale, Value);
+	const FVector NewScale = FMath::Lerp(AnimationBeginScale, AnimationEndScale, Value);
 	Mesh->SetRelativeScale3D(NewScale);
 }
 

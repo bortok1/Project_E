@@ -5,7 +5,6 @@
 #include "Components/TimelineComponent.h"
 #include "SizeManagerComponent.generated.h"
 
-class uCurveFloat;
 class AEPawn;
 class UECameraComponent;
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

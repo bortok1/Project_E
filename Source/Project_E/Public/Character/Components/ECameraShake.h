@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "MatineeCameraShake.h"
 #include "ECameraShake.generated.h"
 

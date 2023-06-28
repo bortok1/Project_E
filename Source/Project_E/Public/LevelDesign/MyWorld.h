@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "PickUpSpawner.h"
-#include <vector>
 #include "MyWorld.generated.h"
 
 class AIce;
+class APickUpSpawner;
 class AEPawn;
+class APickUp;
 UCLASS()
 class PROJECT_E_API AMyWorld : public AActor
 {

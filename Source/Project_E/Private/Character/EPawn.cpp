@@ -118,7 +118,7 @@ void AEPawn::ResetLevel()
 	Delegate.BindLambda([&]()
 		{
 			TeleportTo(StartPosition, StartRotation, false, true);
-			//TODO tu coœ siê psuje
+			//TODO tu coÅ› siÄ™ psuje
 			EAnimationsDoneEvent();
 			SizeComponent->SetDefaultSize();
 	

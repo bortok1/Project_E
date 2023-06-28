@@ -2,9 +2,10 @@
 
 #include "LevelDesign/MyWorld.h"
 #include "EngineUtils.h"
+#include "Ice.h"
 #include "Character/EPawn.h"
 #include "LevelDesign/PickUp.h"
-#include "Ice.h"
+#include "LevelDesign/PickUpSpawner.h"
 
 // Sets default values
 AMyWorld::AMyWorld()

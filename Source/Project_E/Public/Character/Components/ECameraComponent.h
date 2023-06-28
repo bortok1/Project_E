@@ -3,12 +3,10 @@
 #pragma once
 
 #include "Camera/CameraComponent.h"
-#include "Character/PlayerController/EPlayerController.h"
-#include "Kismet/GameplayStatics.h"
-#include "ECameraShake.h"
 #include "ECameraComponent.generated.h"
 
-
+class AEPlayerController;
+class UMatineeCameraShake;
 class AEPawn;
 UCLASS()
 class PROJECT_E_API UECameraComponent : public UCameraComponent
@@ -18,17 +16,20 @@ class PROJECT_E_API UECameraComponent : public UCameraComponent
 	UECameraComponent();
 	
 public:
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
 	void SetDefaultFieldOfView();
 	void ZoomIn();
 	void ZoomOut();
-	void MoveCamera(FVector2d CursorLocation);
-	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 	void Shake();
 
 private:
+	void MoveCamera();
+
 	UPROPERTY()
 	AEPawn* Owner;
 
+	UPROPERTY()
 	AEPlayerController* EPlayerController;
 	
 	FVector TargetPosition;
@@ -36,7 +37,6 @@ private:
 	TSubclassOf<UMatineeCameraShake> CameraShakeClass;
 
 public:
-	
 	UPROPERTY(Category = "Camera", EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "20.0", UIMin = "0.0", UIMax = "20.0"))
 	float FOVStep = 10.f;
 

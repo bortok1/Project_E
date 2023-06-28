@@ -3,6 +3,9 @@
 
 #include "Character/Components/ECameraComponent.h"
 #include "Character/EPawn.h"
+#include "Character/Components/ECameraShake.h"
+#include "Character/PlayerController/EPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 
 UECameraComponent::UECameraComponent()
@@ -28,20 +31,15 @@ void UECameraComponent::ZoomOut()
 	SetFieldOfView(FieldOfView - FOVStep);
 }
 
-void UECameraComponent::MoveCamera(FVector2d CursorLocation)
+void UECameraComponent::MoveCamera()
 {
-	// Take half of screen resolution
-	FVector2D HalfResolution = FVector2D::Zero();
-	if ( GEngine && GEngine->GameViewport )
-	{
-		GEngine->GameViewport->GetViewportSize(HalfResolution);
-		HalfResolution *= 0.5f;
-	}
-
-	FVector2D Vector = CursorLocation - HalfResolution;
-	const float VectorLength = Vector.Length();
-	Vector.Normalize();
-	const FVector2D NewCameraLocation = Vector * FMath::Log2(VectorLength/CameraMovementDivider + 1) * CameraMovementMultiplier;
+	FVector2d JoystickVector = Owner->GetJoystickAxis();
+	const float VectorLength = JoystickVector.Length();
+	JoystickVector.Normalize();
+	
+	const FVector2D NewCameraLocation = JoystickVector *
+		FMath::Log2(VectorLength/CameraMovementDivider + 1) *
+			CameraMovementMultiplier;
 
 	const float BoomZ = Owner->CameraBoom->GetComponentToWorld().GetLocation().Z;
 	
@@ -51,21 +49,22 @@ void UECameraComponent::MoveCamera(FVector2d CursorLocation)
 void UECameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
-	FVector2D Mouse = FVector2d::Zero();
-	EPlayerController->GetMousePosition(Mouse.X, Mouse.Y);
-	MoveCamera(Mouse);
+
+	MoveCamera();
 
 	FVector location = GetRelativeLocation();
-	FVector vector = TargetPosition - location;
+	const FVector vector = TargetPosition - location;
+	
 	FVector2D vector2D;
 	vector2D.X = vector.Y;
 	vector2D.Y = -vector.Z;
+	
 	float length = vector2D.Length();
 	length = FMath::Min(length, CameraMaxSpeedDistance);
 	length /= CameraMaxSpeedDistance;
-	float speed = CameraMaxSpeed * length;
-	if (vector2D.Length() > speed * DeltaTime)
+
+	const float speed = CameraMaxSpeed * length * DeltaTime;
+	if (length > speed)
 	{
 		vector2D.Normalize();
 		vector2D *= speed;

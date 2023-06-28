@@ -1,6 +1,5 @@
 // Copyright Bean Bin, All Rights Reserved.
 
-
 #include "LevelDesign/TriggerBoxDoor.h"
 #include "Character/EPawn.h"
 #include "Components/ShapeComponent.h"
@@ -13,33 +12,34 @@ ATriggerBoxDoor::ATriggerBoxDoor()
 
 void ATriggerBoxDoor::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	int i = 0;
-	if (AEPawn* Pawn = Cast<AEPawn>(OtherActor)) {
-		for (AActor* Door : LinkedDoors) {
-			if (Door) {
-				// Hides visible components
-				Door->SetActorHiddenInGame(true);
+	if (!Cast<AEPawn>(OtherActor))
+		return;
+	
+	for (AActor* Door : LinkedDoors) {
+		if (Door) {
+			// Hides visible components
+			Door->SetActorHiddenInGame(true);
 
-				// Disables collision components
-				Door->SetActorEnableCollision(false);
-			}
-			i++;
+			// Disables collision components
+			Door->SetActorEnableCollision(false);
 		}
 	}
 }
 
 void ATriggerBoxDoor::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (AEPawn* Pawn = Cast<AEPawn>(OtherActor)) {
+	if (const AEPawn* Pawn = Cast<AEPawn>(OtherActor)) {
 		FVector Scale = Pawn->GetActorRelativeScale3D();
-		float ScaleX = Scale[0];
 		float duration;
-		if (ScaleX == 1) { duration = .5f; }
-		else if (ScaleX == 2) { duration = 2.0f; }
-		else if (ScaleX == 3) { duration = 4.0f; }
-		else { duration = 8.0f; }
-		GetWorldTimerManager().SetTimer(Timer, this, &ATriggerBoxDoor::CloseDoors, duration, false);
 
+		switch(static_cast<int>(Scale[0]))
+		{
+		case 1: duration = .5f; break;
+		case 2: duration = 2.f; break;
+		case 3: duration = 4.f; break;
+		default: duration = 8.f;
+		}
+		GetWorldTimerManager().SetTimer(Timer, this, &ATriggerBoxDoor::CloseDoors, duration, false);
 	}
 }
 

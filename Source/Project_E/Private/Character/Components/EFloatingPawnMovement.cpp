@@ -4,8 +4,6 @@
 #include "Character/Components/EFloatingPawnMovement.h"
 #include "Character/EPawn.h"
 #include "Character/Components/SizeManagerComponent.h"
-#include "Character/PlayerController/EPlayerController.h"
-#include "GameFramework/PlayerController.h"
 
 UEFloatingPawnMovement::UEFloatingPawnMovement()
 {
@@ -26,7 +24,7 @@ void UEFloatingPawnMovement::BeginPlay()
 
 	FVector2D ScreenResolution;
 	GEngine->GameViewport->GetViewportSize(ScreenResolution);
-	LastCursorLocation = FVector((ScreenResolution * 0.5f), 0);
+	LastJoystickVector = FVector(ScreenResolution * 0.5f, 0);
 }
 
 void UEFloatingPawnMovement::Move(float DeltaTime, bool bMoveInputPressed = false)
@@ -35,14 +33,14 @@ void UEFloatingPawnMovement::Move(float DeltaTime, bool bMoveInputPressed = fals
 
 	if(bMoveInputPressed && !isAirTime)
 	{
-		LastCursorLocation = GetVectorTowardsCursor();
-		Owner->AddMovementInput(LastCursorLocation, MoveSpeed/Owner->SizeComponent->GetMass());
-		Owner->CharacterMesh->SetRelativeRotation(LastCursorLocation.Rotation());
+		LastJoystickVector = FVector(GetThumbstickPosition().GetSafeNormal(), 0);
+		Owner->AddMovementInput(LastJoystickVector, MoveSpeed/Owner->SizeComponent->GetMass());
+		Owner->CharacterMesh->SetRelativeRotation(LastJoystickVector.Rotation());
 		bStopAfterReset = false;
 	}
 	else if(isAirTime && !bStopAfterReset){
-		Owner->AddMovementInput(LastCursorLocation, MoveSpeed/Owner->SizeComponent->GetMass());
-		Owner->CharacterMesh->SetRelativeRotation(GetVectorTowardsCursor().Rotation());
+		Owner->AddMovementInput(LastJoystickVector, MoveSpeed/Owner->SizeComponent->GetMass());
+		Owner->CharacterMesh->SetRelativeRotation(FVector(GetThumbstickPosition(), 0).Rotation());
 	}
 }
 
@@ -63,7 +61,7 @@ void UEFloatingPawnMovement::Gravity(float DeltaTime)
 		Owner->TeleportTo(TeleportLocation, Owner->GetActorRotation(), false, true);
 		
 		isAirTime = true;
-		LastCursorLocation -= LastCursorLocation * SpeedDumpWhileAirTime * DeltaTime;
+		LastJoystickVector -= LastJoystickVector * SpeedDumpWhileAirTime * DeltaTime;
 	}
 	else {
 		JumpVelocity = GravityForce * DeltaTime;
@@ -71,35 +69,8 @@ void UEFloatingPawnMovement::Gravity(float DeltaTime)
 	}
 }
 
-FVector UEFloatingPawnMovement::GetVectorTowardsCursor() const
-{
-	// Take half of screen resolution
-	FVector2D HalfResolution = FVector2D::Zero();
-	if ( GEngine && GEngine->GameViewport )
-	{
-		GEngine->GameViewport->GetViewportSize(HalfResolution);
-		HalfResolution *= 0.5f;
-	}
-
-	// Direction from screen center (player) to mouse cursor
-	//Windows settings
-	//return FVector((GetMousePosition() - HalfResolution).GetSafeNormal(),0);
-
-	//Mobile settings  .GetSafeNormal(),0);
-	return FVector((GetThumbstickPosition()).GetSafeNormal(), 0);
-}
-
-//For Windows settings
-FVector2D UEFloatingPawnMovement::GetMousePosition() const
-{
-	FVector2D Mouse = FVector2d::Zero();
-	Owner->EPlayerController->GetMousePosition(Mouse.X, Mouse.Y);
-	return Mouse;
-}
-
 //For mobile settings
 FVector2D UEFloatingPawnMovement::GetThumbstickPosition() const
 {
-	FVector2D Thumbstick = Owner->GetJoystickAxis();
-	return Thumbstick;
+	return Owner->GetJoystickAxis();
 }

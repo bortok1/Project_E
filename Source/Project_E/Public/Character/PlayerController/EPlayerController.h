@@ -7,10 +7,6 @@
 class UInputAction;
 class UInputMappingContext;
 
-class AEPawn;
-/**
- * 
- */
 UCLASS()
 class PROJECT_E_API AEPlayerController : public APlayerController
 {
@@ -28,10 +24,4 @@ public:
 	
 	UPROPERTY()
 	class UInputAction* MoveAction;
-
-private:
-	virtual void BeginPlayingState() override;
-	
-	UPROPERTY()
-	AEPawn* EPawn;
 };

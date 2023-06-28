@@ -35,10 +35,8 @@ private:
 	bool bStopAfterReset;
 	float GravityForce;
 	float SpeedDumpWhileAirTime;
-	FVector LastCursorLocation;
+	FVector LastJoystickVector;
 	
-	FVector GetVectorTowardsCursor() const;
-	FVector2D GetMousePosition() const;
 	FVector2D GetThumbstickPosition() const;
 	float MoveSpeed;
 };
