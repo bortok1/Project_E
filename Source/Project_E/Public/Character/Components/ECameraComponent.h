@@ -5,7 +5,6 @@
 #include "Camera/CameraComponent.h"
 #include "ECameraComponent.generated.h"
 
-class AEPlayerController;
 class UMatineeCameraShake;
 class AEPawn;
 UCLASS()
@@ -16,12 +15,13 @@ class PROJECT_E_API UECameraComponent : public UCameraComponent
 	UECameraComponent();
 	
 public:
+	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 	void SetDefaultFieldOfView();
 	void ZoomIn();
 	void ZoomOut();
-	void Shake();
+	void Shake() const;
 
 private:
 	void MoveCamera();
@@ -30,7 +30,7 @@ private:
 	AEPawn* Owner;
 
 	UPROPERTY()
-	AEPlayerController* EPlayerController;
+	APlayerCameraManager* CameraManager;
 	
 	FVector TargetPosition;
 	

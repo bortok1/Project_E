@@ -4,16 +4,21 @@
 #include "Character/Components/ECameraComponent.h"
 #include "Character/EPawn.h"
 #include "Character/Components/ECameraShake.h"
-#include "Character/PlayerController/EPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
 
 UECameraComponent::UECameraComponent()
 {
-	Owner = Cast<AEPawn>(GetOwner());
 	PrimaryComponentTick.bCanEverTick = true;
-	EPlayerController = Cast<AEPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	CameraShakeClass = UECameraShake::StaticClass();
+}
+
+void UECameraComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Owner = Cast<AEPawn>(GetOwner());
+	CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
 }
 
 void UECameraComponent::SetDefaultFieldOfView()
@@ -75,7 +80,7 @@ void UECameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	}
 }
 
-void UECameraComponent::Shake()
+void UECameraComponent::Shake() const
 {
-	EPlayerController->PlayerCameraManager->StartCameraShake(CameraShakeClass, 1.0f);
+	CameraManager->StartCameraShake(CameraShakeClass, 1.0f);
 }
